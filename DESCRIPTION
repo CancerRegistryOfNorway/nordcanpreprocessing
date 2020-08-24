@@ -14,3 +14,4 @@ Depends:
     R (>= 2.10)
 Remotes:
     github::WetRobot/dbc
+RoxygenNote: 7.1.0
