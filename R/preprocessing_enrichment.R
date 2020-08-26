@@ -23,7 +23,7 @@
 ###for the moment for the columns other than the entity ones and the ones "Created by R-program from checktool-info"
 
 # ####working directory
-# setwd("C:/Users/FoU/Desktop")
+# setwd("")
 # 
 # ####packages
 # packages=c('data.table','remotes')
