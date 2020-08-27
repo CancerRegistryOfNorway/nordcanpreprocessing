@@ -58,17 +58,17 @@ enrich_nordcan_cancer_case_dataset <- function(x) {
   x <- data.table::setDT(data.table::copy(x))
 
   #definitions
-  x[, "mob"]=x[,data.table::month(date_of_birth)]
-  x[, "yob"]=x[,data.table::year(date_of_birth)]
-  x[, "moi"]=x[,data.table::month(date_of_incidence)]
-  x[, "yoi"]=x[,data.table::year(date_of_incidence)]
-  x[, "mof"]=x[,data.table::month(end_of_followup)]
-  x[, "yof"]=x[,data.table::year(end_of_followup)]
-  x[, "surv_time"]=x[,as.numeric(end_of_followup-date_of_incidence)]
-  x$surv_time[x$autopsy==1]<-0
-  x[, "agegroup"]=cut(x$Age,seq(0,5*round(max(x$Age)/5),5),right=F)
+  x[, "mob" := data.table::month(date_of_birth)]
+  x[, "yob" := data.table::year(date_of_birth)]
+  x[, "moi" := data.table::month(date_of_incidence)]
+  x[, "yoi" := data.table::year(date_of_incidence)]
+  x[, "mof" := data.table::month(end_of_followup)]
+  x[, "yof" := data.table::year(end_of_followup)]
+  x[, "surv_time" := as.numeric(end_of_followup-date_of_incidence)]
+  x[autopsy == 1, "surv_time" := 0.0]
+  x[, "agegroup" := cut(Age, seq(0,5*round(max(Age)/5),5),right=FALSE)]
 
-  return(x)
+  return(x[])
 }
 
 
