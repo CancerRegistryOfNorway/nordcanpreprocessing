@@ -40,8 +40,8 @@
 # 
 # ###data
 # date_of_birth=sample(seq(as.Date('1900-01-01'),as.Date('1950-12-31'),by="day"),rep=T,10000)
-# date_of_incidence=date_of_birth+sample(as.numeric(difftime(as.Date('1953-01-01'),as.Date('1900-01-01'))):(as.numeric(difftime(as.Date('1953-01-01'),as.Date('1900-01-01')))+10000),rep=T,10000)
-# end_of_followup=date_of_incidence+sample(-600:6000,rep=T,10000)
+# date_of_incidence=date_of_birth+sample(as.numeric(difftime(as.Date('1953-01-01'),as.Date('1900-01-01'))):(as.numeric(difftime(as.Date('1953-01-01'),as.Date('1900-01-01')))+1000),rep=T,10000)
+# end_of_followup=date_of_incidence+sample(-600:3000,rep=T,10000)
 # cancer_case_dataset=cbind.data.frame(
 #   date_of_birth=date_of_birth,
 #   date_of_incidence=date_of_incidence,
