@@ -67,6 +67,7 @@ enrich_nordcan_cancer_case_dataset <- function(x) {
   x[, "surv_time" := as.numeric(end_of_followup-date_of_incidence)]
   x[autopsy == 1, "surv_time" := 0.0]
   x[, "agegroup" := cut(Age, seq(0,5*round(max(Age)/5),5),right=FALSE)]
+  levels(x$agegroup)=c(1:21)
 
   return(x[])
 }
