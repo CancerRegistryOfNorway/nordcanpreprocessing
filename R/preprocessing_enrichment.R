@@ -72,7 +72,9 @@ enrich_nordcan_cancer_case_dataset <- function(x) {
   5*ceiling(max(x$yoi)/5),5),right=FALSE),2,5)]
   x[, "excl_surv_age" := ifelse (x$Age<90,"0","1")]
   x[, "excl_surv_dco" := ifelse (x$bod==0,"1","0")]
-
+  x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,"1","0")]
+  x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,"1","0")]
+  x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,"1","0")]
 
   return(x[])
 }
