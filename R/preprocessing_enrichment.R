@@ -105,15 +105,26 @@ iarccrgtools_dataset <- function(
   )
   template <- iarccrgtools:::create_example(paste0("mandatory_", tool_name),
                                             n.rows = 10L)
-  col_nms <- nordcancore::nordcan_column_name_set(
+  nc_col_nms <- nordcancore::nordcan_column_name_set(
     paste0("column_name_set_iarccrgtools_mandatory_", tool_name)
   )
-  iarc_data <- data.table::setDT(lapply(col_nms, function(col_nm) {
-    tgt_class <- class(template[[col_nm]])[1L]
+  dbc::assert_is_data.frame_with_required_names(
+    x = x, required_names = unname(nc_col_nms)
+  )
+  iarc_col_nms <- names(nc_col_nms)
+  if (any(!iarc_col_nms %in% names(template))) {
+    stop("internal error: mis-specified IARC CRG Tools column names: ",
+         deparse(setdiff(names(template), iarc_col_nms)))
+  }
+  nc_col_nms <- unname(nc_col_nms)
+  iarc_data <- data.table::setDT(lapply(seq_along(nc_col_nms), function(j) {
+    nc_col_nm <- nc_col_nms[j]
+    iarc_col_nm <- iarc_col_nms[j]
+    tgt_class <- class(template[[iarc_col_nm]])[1L]
     conversion_fun <- match.fun(paste0("as.", tgt_class))
-    conversion_fun(x[[col_nm]])
+    conversion_fun(x[[nc_col_nm]])
   }))
-  data.table::setnames(iarc_data, names(iarc_data), names(col_nms))
+  data.table::setnames(iarc_data, names(iarc_data), iarc_col_nms)
   return(iarc_data[])
 }
 
