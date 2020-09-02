@@ -22,21 +22,6 @@
 ###function for creating columns based on information in the other columns.
 ###for the moment for the columns other than the entity ones and the ones "Created by R-program from checktool-info"
 
-# ####working directory
-# setwd("")
-#
-# ####packages
-# packages=c('data.table','remotes')
-# for (p in packages){
-#   if (!require(p,character.only=T)){install.packages(p,dependencies=T,repos='http://cran.us.r-project.org')}
-#   library(p,character.only=T)
-# }
-#
-# packagesgithub=c('easyassertions','basicepistats','nordcanepistats','nordcanpreprocessing')
-# for (p in packagesgithub){
-#   if (!require(p,character.only=T)){install_github("WetRobot/p",force=T)}
-#   library(p,character.only=T)
-# }
 #
 # ###data
 # date_of_birth=sample(seq(as.Date('1900-01-01'),as.Date('1950-12-31'),by="day"),rep=T,10000)
