@@ -2,8 +2,11 @@ Package: nordcanpreprocessing
 Type: Package
 Title: NORDCAN Dataset Preprocessing
 Version: 0.1.2
-Author: Who wrote it
-Maintainer: Huidong Tian
+Authors@R: c(
+  person("Huidong", "Tian", email = "huidong.tian@kreftregisteret.no", role = c("aut", "cre")), 
+  person("Joonas", "Miettinen", email = "joonas.miettinen@cancer.fi", role = "aut")
+  )
+Maintainer: Huidong Tian <huidong.tian@kreftregisteret.no>
 Description: Enables preprocessing of NORDCAN datasets.
 License: MIT + file LICENSE
 Imports: 
