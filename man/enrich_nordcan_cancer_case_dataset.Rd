@@ -7,7 +7,7 @@
 enrich_nordcan_cancer_case_dataset(x)
 }
 \arguments{
-\item{x}{`[data.frame]` (mandatory, no default)
+\item{x}{\verb{[data.frame]} (mandatory, no default)
 dataset of cancer cases}
 }
 \description{

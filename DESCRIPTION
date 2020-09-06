@@ -1,12 +1,11 @@
 Package: nordcanpreprocessing
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.1
+Title: NORDCAN Dataset Preprocessing
+Version: 0.1.2
 Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Maintainer: Huidong Tian
+Description: Enables preprocessing of NORDCAN datasets.
+License: MIT + file LICENSE
 Imports: 
     dbc,
     iarccrgtools
@@ -18,3 +17,4 @@ Remotes:
     github::WetRobot/dbc,
     github::WetRobot/iarccrgtools
 RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)

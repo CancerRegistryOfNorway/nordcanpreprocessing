@@ -68,22 +68,15 @@ enrich_nordcan_cancer_case_dataset <- function(x) {
 
 
 #' @importFrom iarccrgtools create_example
-#' @importFrom nordcancore nordcan_column_name_set_names nordcan_column_name_set
+#' @importFrom nordcancore nordcan_iarccrgtools_tool_names
+#' nordcan_column_name_set
 #' @importFrom data.table setDT setnames
 iarccrgtools_dataset <- function(
   x,
   tool_name
 ) {
   dbc::assert_is_character_nonNA_atom(tool_name)
-  iarccrgtools_column_name_set_names <-
-    nordcancore::nordcan_column_name_set_names()
-  iarccrgtools_column_name_set_names <- iarccrgtools_column_name_set_names[
-    grepl("iarccrgtools", iarccrgtools_column_name_set_names)
-  ]
-  tool_name_set <- sub("column_name_set_iarccrgtools_((all)|(mandatory))_",
-                       "",
-                       iarccrgtools_column_name_set_names)
-  tool_name_set <- unique(tool_name_set)
+  tool_name_set <- nordcancore::nordcan_iarccrgtools_tool_names()
   dbc::assert_atom_is_in_set(
     tool_name,
     set = tool_name_set

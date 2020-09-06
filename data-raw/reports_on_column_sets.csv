@@ -1,2 +1,3 @@
-col_nm_set;report_fun_nm
-bi_date,dg_date;report_on_bi_date_dg_date
+col_nm_set;test_string
+date_of_birth,date_of_incidence;date_of_birth <= date_of_incidence
+date_of_incidence,end_of_followup;date_of_incidence <= end_of_followup
