@@ -37,7 +37,11 @@
 # )
 
 #' @importFrom data.table setDT copy := month year
-enrich_nordcan_cancer_case_dataset <- function(x) {
+enrich_nordcan_cancer_case_dataset <- function(
+  x,
+  iarccrgtools_exe_path,
+  iarccrgtools_work_dir
+  ) {
   dbc::assert_is_data.frame(x)
 
   #takes a copy so the original object is not affected
@@ -61,6 +65,19 @@ enrich_nordcan_cancer_case_dataset <- function(x) {
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,"1","0")]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,"1","0")]
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,"1","0")]
+
+  icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
+    x = x,
+    tool_name = "mandatory_icdo3_to_icd10",
+    iarccrgtools_exe_path = iarccrgtools_exe_path,
+    iarccrgtools_work_dir = iarccrgtools_work_dir
+  )
+  i.icdo3_to_icd10_output <- NULL # this only to appease R CMD CHECK
+  x[
+    i = icd10_dt,
+    on = "tum",
+    j = "icd10" := i.icdo3_to_icd10_output,
+  ]
 
   return(x[])
 }
@@ -169,7 +186,14 @@ iarccrgtools_tool <- function(
     tool.results = iarc_results
   )
   data.table::setkeyv(iarc_dt, "record_id")
-
+  col_nms <- nordcancore::nordcan_column_name_set(
+    paste0("column_name_set_iarccrgtools_mandatory_", tool_name)
+  )
+  iarc_col_nms <- names(col_nms)
+  nc_col_nms <- unname(col_nms)
+  data.table::setnames(
+    iarc_dt, "record_id", nc_col_nms[iarc_col_nms == "record_id"]
+  )
   return(iarc_dt[])
 }
 

@@ -4,7 +4,11 @@
 \alias{enrich_nordcan_cancer_case_dataset}
 \title{NORDCAN Cancer Case Dataset}
 \usage{
-enrich_nordcan_cancer_case_dataset(x)
+enrich_nordcan_cancer_case_dataset(
+  x,
+  iarccrgtools_exe_path,
+  iarccrgtools_work_dir
+)
 }
 \arguments{
 \item{x}{\verb{[data.frame]} (mandatory, no default)
