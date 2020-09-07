@@ -69,6 +69,9 @@ test_dataset_is_valid <- function(
 }
 
 #' @rdname reports_assertions_tests
+#' @param column_names `[character]` (mandatory, no default)
+#'
+#' names of columns to check
 #' @export
 #' @importFrom data.table rbindlist
 #' @importFrom dbc assert_is_character_nonNA_vector
@@ -149,6 +152,9 @@ test_dataset_columns_are_valid <- function(
 }
 
 #' @rdname reports_assertions_tests
+#' @param column_name `[character]` (mandatory, no default)
+#'
+#' name of column to check
 #' @export
 report_column_is_valid <- function(x, column_name) {
   dbc::assert_is_character_nonNA_atom(column_name)

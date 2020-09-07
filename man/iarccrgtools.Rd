@@ -11,6 +11,10 @@ iarccrgtools_dataset(x, tool_name)
 iarccrgtools_tool(x, tool_name, iarccrgtools_exe_path, iarccrgtools_work_dir)
 }
 \arguments{
+\item{x}{\verb{[data.table]} (mandatory, no default)
+
+the NORDCAN cancer record dataset}
+
 \item{tool_name}{\verb{[character]} (mandatory, no default)
 
 name of tool in IARC CRG Tools to use; one of the output of
@@ -25,10 +29,6 @@ path to executable of IARC CRG Tools; passed to
 
 path to a directory where inputs and outputs to IARC CRG Tools will be
 stored; passed to \code{\link[iarccrgtools:work_dir]{iarccrgtools::set_tools_work_dir()}}}
-
-\item{`[data.table]`}{(mandatory, no default)
-
-the NORDCAN cancer record dataset}
 }
 \description{
 Pass NORDCAN cancer record dataset to IARC CRG Tools from R.

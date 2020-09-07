@@ -41,6 +41,14 @@ dataset to report / assert / test on}
 name of a NORDCAN dataset; must be one of the elements of output of
 \code{nordcancore::nordcan_dataset_names()}; therefore see also
 \verb{[nordcancore::nordcan_dataset_names]}}
+
+\item{column_names}{\verb{[character]} (mandatory, no default)
+
+names of columns to check}
+
+\item{column_name}{\verb{[character]} (mandatory, no default)
+
+name of column to check}
 }
 \description{
 Functions to create reports, assert, and test NORDCAN datasets and columns

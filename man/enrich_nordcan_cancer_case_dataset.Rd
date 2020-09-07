@@ -13,6 +13,12 @@ enrich_nordcan_cancer_case_dataset(
 \arguments{
 \item{x}{\verb{[data.frame]} (mandatory, no default)
 dataset of cancer cases}
+
+\item{iarccrgtools_exe_path}{\verb{[character]} (mandatory, no default)
+passed to \verb{[iarccrgtools::set_tools_exe_path]}}
+
+\item{iarccrgtools_work_dir}{\verb{[character]} (mandatory, no default)
+passed to \verb{[iarccrgtools::set_tools_work_dir]}}
 }
 \description{
 Add new necessary columns to the cancer case dataset for use in computing

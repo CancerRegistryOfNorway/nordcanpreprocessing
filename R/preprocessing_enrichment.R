@@ -9,6 +9,10 @@
 #' statistics.
 #' @param x `[data.frame]` (mandatory, no default)
 #' dataset of cancer cases
+#' @param iarccrgtools_exe_path `[character]` (mandatory, no default)
+#' passed to `[iarccrgtools::set_tools_exe_path]`
+#' @param iarccrgtools_work_dir `[character]` (mandatory, no default)
+#' passed to `[iarccrgtools::set_tools_work_dir]`
 #' @section Format of input dataset:
 #' See https://github.com/CancerRegistryOfNorway/NORDCAN/wiki/Call-for-data---Incidence
 #' @section New columns:
@@ -90,7 +94,7 @@ enrich_nordcan_cancer_case_dataset <- function(
 #' @importFrom nordcancore nordcan_column_name_set_names nordcan_column_name_set
 #' @importFrom data.table setDT setnames
 #' @export
-#' @param `[data.table]` (mandatory, no default)
+#' @param x `[data.table]` (mandatory, no default)
 #'
 #' the NORDCAN cancer record dataset
 #' @param tool_name `[character]` (mandatory, no default)

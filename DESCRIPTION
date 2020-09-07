@@ -10,8 +10,10 @@ Maintainer: Huidong Tian <huidong.tian@kreftregisteret.no>
 Description: Enables preprocessing of NORDCAN datasets.
 License: MIT + file LICENSE
 Imports: 
+    data.table,
     dbc,
-    iarccrgtools
+    iarccrgtools,
+    nordcancore
 Encoding: UTF-8
 LazyData: true
 Depends: 

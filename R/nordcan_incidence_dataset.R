@@ -1,4 +1,5 @@
 
+#' @importFrom utils sessionInfo
 report_to_log <- function(
   report_df,
   log_file_path = NULL,
@@ -26,8 +27,8 @@ report_to_log <- function(
   dbc::assert_atom_is_in_set(format, set = c("R", "markdown"))
 
   sink(file = log_file_path, append = FALSE)
-  cat("sessionInfo():\n")
-  print(sessionInfo())
+  cat("utils::sessionInfo():\n")
+  print(utils::sessionInfo())
   cat("\n")
   cat("Sys.time():\n")
   print(Sys.time())
