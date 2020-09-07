@@ -48,15 +48,15 @@ enrich_nordcan_cancer_case_dataset <- function(
   x <- data.table::setDT(data.table::copy(x))
 
   #definitions
-  x[, "mob" := data.table::month(date_of_birth)]
-  x[, "yob" := data.table::year(date_of_birth)]
-  x[, "moi" := data.table::month(date_of_incidence)]
-  x[, "yoi" := data.table::year(date_of_incidence)]
-  x[, "mof" := data.table::month(end_of_followup)]
-  x[, "yof" := data.table::year(end_of_followup)]
-  x[, "surv_time" := as.numeric(end_of_followup-date_of_incidence)]
-  x[autopsy == 1, "surv_time" := 0.0]
-  x[, "agegroup" := cut(age_year, seq(0,5*round(max(age_year)/5),5),right=FALSE)]
+  x[, "mob" := data.table::month(x$date_of_birth)]
+  x[, "yob" := data.table::year(x$date_of_birth)]
+  x[, "moi" := data.table::month(x$date_of_incidence)]
+  x[, "yoi" := data.table::year(x$date_of_incidence)]
+  x[, "mof" := data.table::month(x$end_of_followup)]
+  x[, "yof" := data.table::year(x$end_of_followup)]
+  x[, "surv_time" := as.numeric(x$end_of_followup - x$date_of_incidence)]
+  x[x$autopsy == 1, "surv_time" := 0.0]
+  x[, "agegroup" := cut(x$age_year, seq(0,5*round(max(x$age_year)/5),5),right=FALSE)]
   levels(x$agegroup)=c(1:21)
   x[, "period" := substr(cut(x$yoi,seq(5*floor(min(x$yoi)/5),
   5*ceiling(max(x$yoi)/5),5),right=FALSE),2,5)]
@@ -84,8 +84,8 @@ enrich_nordcan_cancer_case_dataset <- function(
     on = "tum",
     j = "excl_imp_error" := suppressWarnings(i.icdo3_to_icd10_input.eO3to10),
   ]
-   x[, "excl_imp_icd10conversion" := ifelse (is.na(excl_imp_error),"0","1")]
-  
+   x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),"0","1")]
+
   return(x[])
 }
 
