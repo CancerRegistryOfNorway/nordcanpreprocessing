@@ -33,7 +33,7 @@
 # data$date_of_incidence=as.Date(data$date_of_incidence,format="%d.%m.%Y")
 # data$end_of_followup=as.Date(data$end_of_followup,format="%d.%m.%Y")
 # data=data[,-which(names(data) %in% c("icd10","mob","yob","moi","mof","yof","surv_time","period","excl_surv_age","excl_surv_dco",
-# "excl_surv_autopsy","excl_surv_negativefou","excl_surv_zerofou"))]
+# "excl_surv_autopsy","excl_surv_negativefou","excl_surv_zerofou","excl_imp_error"))]
 
 
 #' @importFrom data.table setDT copy := month year
@@ -68,7 +68,6 @@ enrich_nordcan_cancer_case_dataset <- function(
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
-    #tool_name = "mandatory_icdo3_to_icd10",
     tool_name = "icdo3_to_icd10",
     iarccrgtools_exe_path = iarccrgtools_exe_path,
     iarccrgtools_work_dir = iarccrgtools_work_dir
@@ -78,6 +77,12 @@ enrich_nordcan_cancer_case_dataset <- function(
     i = icd10_dt,
     on = "tum",
     j = "icd10" := i.icdo3_to_icd10_output.txt,
+  ]
+  i.icdo3_to_icd10_input.eO3to10 <- NULL # this only to appease R CMD CHECK
+  x[
+    i = icd10_dt,
+    on = "tum",
+    j = "excl_imp_error" := suppressWarnings(i.icdo3_to_icd10_input.eO3to10),
   ]
 
   return(x[])
