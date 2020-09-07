@@ -28,17 +28,10 @@
 
 #
 # ###data
-# date_of_birth=sample(seq(as.Date('1900-01-01'),as.Date('1950-12-31'),by="day"),rep=T,10000)
-# date_of_incidence=date_of_birth+sample(as.numeric(difftime(as.Date('1953-01-01'),as.Date('1900-01-01'))):(as.numeric(difftime(as.Date('1953-01-01'),as.Date('1900-01-01')))+1000),rep=T,10000)
-# end_of_followup=date_of_incidence+sample(-600:3000,rep=T,10000)
-# cancer_case_dataset=cbind.data.frame(
-#   date_of_birth=date_of_birth,
-#   date_of_incidence=date_of_incidence,
-#   end_of_followup=end_of_followup,
-#   Age=sample(0:104,10000,rep=T),
-#   bod=sample(0:7,10000,rep=T),
-#   autopsy=sample(0:1,10000,rep=T,prob=c(0.99,0.01))
-# )
+# data=read.csv("Cancer_case_dataset.csv")
+# data$date_of_birth=as.Date(data$date_of_birth,format="%d.%m.%y")
+# data$date_of_incidence=as.Date(data$date_of_incidence,format="%d.%m.%y")
+# data$end_of_followup=as.Date(data$end_of_followup,format="%d.%m.%y")
 
 #' @importFrom data.table setDT copy := month year
 enrich_nordcan_cancer_case_dataset <- function(
@@ -60,11 +53,11 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[, "yof" := data.table::year(end_of_followup)]
   x[, "surv_time" := as.numeric(end_of_followup-date_of_incidence)]
   x[autopsy == 1, "surv_time" := 0.0]
-  x[, "agegroup" := cut(Age, seq(0,5*round(max(Age)/5),5),right=FALSE)]
+  x[, "agegroup" := cut(age_year, seq(0,5*round(max(age_year)/5),5),right=FALSE)]
   levels(x$agegroup)=c(1:21)
   x[, "period" := substr(cut(x$yoi,seq(5*floor(min(x$yoi)/5),
   5*ceiling(max(x$yoi)/5),5),right=FALSE),2,5)]
-  x[, "excl_surv_age" := ifelse (x$Age<90,"0","1")]
+  x[, "excl_surv_age" := ifelse (x$age_year<90,"0","1")]
   x[, "excl_surv_dco" := ifelse (x$bod==0,"1","0")]
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,"1","0")]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,"1","0")]
