@@ -77,11 +77,11 @@ enrich_nordcan_cancer_case_dataset <- function(
     iarccrgtools_exe_path = iarccrgtools_exe_path,
     iarccrgtools_work_dir = iarccrgtools_work_dir
   )
-  i.icdo3_to_icd10_output <- NULL # this only to appease R CMD CHECK
+  i.icdo3_to_icd10_output.txt <- NULL # this only to appease R CMD CHECK
   x[
     i = icd10_dt,
     on = "tum",
-    j = "icd10" := i.icdo3_to_icd10_output,
+    j = "icd10" := i.icdo3_to_icd10_output.txt,
   ]
 
   return(x[])
