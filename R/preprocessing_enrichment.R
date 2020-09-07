@@ -65,12 +65,35 @@ enrich_nordcan_cancer_case_dataset <- function(x) {
   return(x[])
 }
 
+#' @title IARC CRG Tools
+#' @description
+#' Pass NORDCAN cancer record dataset to IARC CRG Tools from R.
+
+#' @importFrom iarccrgtools create_example
+#' @importFrom nordcancore nordcan_column_name_set_names nordcan_column_name_set
+#' @importFrom data.table setDT setnames
+#' @export
+#' @param `[data.table]` (mandatory, no default)
+#'
+#' the NORDCAN cancer record dataset
+#' @param tool_name `[character]` (mandatory, no default)
+#'
+#' name of tool in IARC CRG Tools to use; one of the output of
+#' `[nordcancore::nordcan_iarccrgtools_tool_names()]`
+#' @name iarccrgtools
 
 
+#' @rdname iarccrgtools
 #' @importFrom iarccrgtools create_example
 #' @importFrom nordcancore nordcan_iarccrgtools_tool_names
 #' nordcan_column_name_set
 #' @importFrom data.table setDT setnames
+#' @details
+#' - `iarccrgtools_dataset` collects a dataset from `x` that corresponds to the
+#'   requirements of the appropriate tool given in `tool_name`;
+#'   see `[iarccrgtools::create_example]` for the formats of each column, and
+#'   use `[nordcancore::nordcan_column_name_set]` to see which columns are used
+#' @export
 iarccrgtools_dataset <- function(
   x,
   tool_name
@@ -81,7 +104,7 @@ iarccrgtools_dataset <- function(
     tool_name,
     set = tool_name_set
   )
-  template <- iarccrgtools:::create_example(paste0("mandatory_", tool_name),
+  template <- iarccrgtools::create_example(paste0("mandatory_", tool_name),
                                             n.rows = 10L)
   nc_col_nms <- nordcancore::nordcan_column_name_set(
     paste0("column_name_set_iarccrgtools_mandatory_", tool_name)
@@ -107,9 +130,23 @@ iarccrgtools_dataset <- function(
 }
 
 
+#' @rdname iarccrgtools
+#' @param iarccrgtools_exe_path `[character]` (mandatory, no default)
+#'
+#' path to executable of IARC CRG Tools; passed to
+#' [iarccrgtools::set_tools_exe_path]
+#' @param iarccrgtools_work_dir `[character]` (mandatory, no default)
+#'
+#' path to a directory where inputs and outputs to IARC CRG Tools will be
+#' stored; passed to [iarccrgtools::set_tools_work_dir()]
 #' @importFrom iarccrgtools set_tools_exe_path set_tools_work_dir
 #' interact_with_tool connect_tool_results_to_observations
 #' @importFrom data.table setkeyv
+#' @details
+#' - `iarccrgtools_tool` runs first `[iarccrgtools::interact_with_tool]` and
+#'   then `[iarccrgtools::connect_tool_results_to_observations]`; see those
+#'   functions for more information
+#' @export
 iarccrgtools_tool <- function(
   x,
   tool_name,
