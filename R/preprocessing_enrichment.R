@@ -29,9 +29,9 @@
 #
 # ###data
 # data=read.csv("Cancer_case_dataset.csv")
-# data$date_of_birth=as.Date(data$date_of_birth,format="%d.%m.%y")
-# data$date_of_incidence=as.Date(data$date_of_incidence,format="%d.%m.%y")
-# data$end_of_followup=as.Date(data$end_of_followup,format="%d.%m.%y")
+# data$date_of_birth=as.Date(data$date_of_birth,format="%d.%m.%Y")
+# data$date_of_incidence=as.Date(data$date_of_incidence,format="%d.%m.%Y")
+# data$end_of_followup=as.Date(data$end_of_followup,format="%d.%m.%Y")
 # data=data[,-which(names(data) %in% c("icd10","mob","yob","moi","mof","yof","surv_time","period","excl_surv_age","excl_surv_dco",
 # "excl_surv_autopsy","excl_surv_negativefou","excl_surv_zerofou"))]
 
