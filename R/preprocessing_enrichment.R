@@ -84,6 +84,7 @@ enrich_nordcan_cancer_case_dataset <- function(
     on = "tum",
     j = "excl_imp_error" := suppressWarnings(i.icdo3_to_icd10_input.eO3to10),
   ]
+   x[, "excl_imp_icd10conversion" := ifelse (is.na(excl_imp_error),"0","1")]
   
   return(x[])
 }
