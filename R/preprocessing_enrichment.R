@@ -72,7 +72,8 @@ enrich_nordcan_cancer_case_dataset <- function(
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
-    tool_name = "mandatory_icdo3_to_icd10",
+    #tool_name = "mandatory_icdo3_to_icd10",
+    tool_name = "icdo3_to_icd10",
     iarccrgtools_exe_path = iarccrgtools_exe_path,
     iarccrgtools_work_dir = iarccrgtools_work_dir
   )
