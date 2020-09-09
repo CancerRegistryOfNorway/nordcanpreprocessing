@@ -98,7 +98,7 @@ enrich_nordcan_cancer_case_dataset <- function(
     on = "tum",
     j = "excl_imp_duplicate" := suppressWarnings(i.multiple_primary_input.mul),
   ]
-   x[, "excl_imp_duplicate" := ifelse(grepl("\\*",o$excl_imp_duplicate),1,0)]
+   x[, "excl_imp_duplicate" := ifelse(grepl("\\*",x$excl_imp_duplicate),1,0)]
  
   return(x[])
 }
