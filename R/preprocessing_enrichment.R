@@ -85,7 +85,20 @@ enrich_nordcan_cancer_case_dataset <- function(
     j = "excl_imp_error" := suppressWarnings(i.icdo3_to_icd10_input.eO3to10),
   ]
    x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),"0","1")]
-
+ 
+    mp <- nordcanpreprocessing::iarccrgtools_tool(
+    x = x,
+    tool_name = "multiple_primary",
+    iarccrgtools_exe_path = iarccrgtools_exe_path,
+    iarccrgtools_work_dir = iarccrgtools_work_dir
+  )
+   i.multiple_primary_input.mul <- NULL # this only to appease R CMD CHECK
+  x[
+    i = mp,
+    on = "tum",
+    j = "excl_imp_duplicate" := suppressWarnings(i.multiple_primary_input.mul),
+  ]
+ 
   return(x[])
 }
 
