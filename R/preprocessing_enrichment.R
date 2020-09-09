@@ -137,9 +137,10 @@ iarccrgtools_dataset <- function(
     x = x, required_names = unname(nc_col_nms)
   )
   iarc_col_nms <- names(nc_col_nms)
-  if (any(!iarc_col_nms %in% names(template))) {
-    stop("internal error: mis-specified IARC CRG Tools column names: ",
-         deparse(setdiff(names(template), iarc_col_nms)))
+  if (!identical(sort(iarc_col_nms), sort(names(template)))) {
+    stop("internal error: mis-specified IARC CRG Tools column names; ",
+         "iarc_col_nms = ", deparse(sort(iarc_col_nms)), "; ",
+         "sort(names(template)) = ", deparse(sort(names(template))))
   }
   nc_col_nms <- unname(nc_col_nms)
   iarc_data <- data.table::setDT(lapply(seq_along(nc_col_nms), function(j) {
