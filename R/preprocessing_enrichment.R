@@ -66,7 +66,7 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,"1","0")]
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,"1","0")]
   x[, "excl_imp_total" := ifelse(rowSums(sapply(x[,grepl("excl",names(x))
-    &!grepl("excl_imp_error",names(x))],'%in%',1))>0,1L,0L)
+    &!grepl("excl_imp_error",names(x))],'%in%',1))>0,1L,0L)]
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
