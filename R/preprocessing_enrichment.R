@@ -65,6 +65,7 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,"1","0")]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,"1","0")]
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,"1","0")]
+  x[, "excl_imp_entitymissing" := ifelse (is.na(x$entity),1L,0L)]
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
