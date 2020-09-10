@@ -29,11 +29,11 @@
 #
 # ###data
 # data=read.csv("Cancer_case_dataset.csv")
-# data$date_of_birth=as.Date(data$date_of_birth,format="%d.%m.%y")
-# data$date_of_incidence=as.Date(data$date_of_incidence,format="%d.%m.%y")
-# data$end_of_followup=as.Date(data$end_of_followup,format="%d.%m.%y")
+# data$date_of_birth=as.Date(data$date_of_birth,format="%d.%m.%Y")
+# data$date_of_incidence=as.Date(data$date_of_incidence,format="%d.%m.%Y")
+# data$end_of_followup=as.Date(data$end_of_followup,format="%d.%m.%Y")
 # data=data[,-which(names(data) %in% c("icd10","mob","yob","moi","mof","yof","surv_time","period","excl_surv_age","excl_surv_dco",
-# "excl_surv_autopsy","excl_surv_negativefou","excl_surv_zerofou"))]
+# "excl_surv_autopsy","excl_surv_negativefou","excl_surv_zerofou","excl_imp_error"))]
 
 
 #' @importFrom data.table setDT copy := month year
@@ -48,15 +48,15 @@ enrich_nordcan_cancer_case_dataset <- function(
   x <- data.table::setDT(data.table::copy(x))
 
   #definitions
-  x[, "mob" := data.table::month(date_of_birth)]
-  x[, "yob" := data.table::year(date_of_birth)]
-  x[, "moi" := data.table::month(date_of_incidence)]
-  x[, "yoi" := data.table::year(date_of_incidence)]
-  x[, "mof" := data.table::month(end_of_followup)]
-  x[, "yof" := data.table::year(end_of_followup)]
-  x[, "surv_time" := as.numeric(end_of_followup-date_of_incidence)]
-  x[autopsy == 1, "surv_time" := 0.0]
-  x[, "agegroup" := cut(age_year, seq(0,5*round(max(age_year)/5),5),right=FALSE)]
+  x[, "mob" := data.table::month(x$date_of_birth)]
+  x[, "yob" := data.table::year(x$date_of_birth)]
+  x[, "moi" := data.table::month(x$date_of_incidence)]
+  x[, "yoi" := data.table::year(x$date_of_incidence)]
+  x[, "mof" := data.table::month(x$end_of_followup)]
+  x[, "yof" := data.table::year(x$end_of_followup)]
+  x[, "surv_time" := as.numeric(x$end_of_followup - x$date_of_incidence)]
+  x[x$autopsy == 1, "surv_time" := 0.0]
+  x[, "agegroup" := cut(x$age_year, seq(0,5*round(max(x$age_year)/5),5),right=FALSE)]
   levels(x$agegroup)=c(1:21)
   x[, "period" := substr(cut(x$yoi,seq(5*floor(min(x$yoi)/5),
   5*ceiling(max(x$yoi)/5),5),right=FALSE),2,5)]
@@ -68,7 +68,6 @@ enrich_nordcan_cancer_case_dataset <- function(
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
-    #tool_name = "mandatory_icdo3_to_icd10",
     tool_name = "icdo3_to_icd10",
     iarccrgtools_exe_path = iarccrgtools_exe_path,
     iarccrgtools_work_dir = iarccrgtools_work_dir
@@ -79,7 +78,28 @@ enrich_nordcan_cancer_case_dataset <- function(
     on = "tum",
     j = "icd10" := i.icdo3_to_icd10_output.txt,
   ]
-
+  i.icdo3_to_icd10_input.eO3to10 <- NULL # this only to appease R CMD CHECK
+  x[
+    i = icd10_dt,
+    on = "tum",
+    j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
+  ]
+   x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
+ 
+    mp <- nordcanpreprocessing::iarccrgtools_tool(
+    x = x,
+    tool_name = "multiple_primary",
+    iarccrgtools_exe_path = iarccrgtools_exe_path,
+    iarccrgtools_work_dir = iarccrgtools_work_dir
+  )
+   i.multiple_primary_input.mul <- NULL # this only to appease R CMD CHECK
+  x[
+    i = mp,
+    on = "tum",
+    j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
+  ]
+   x[, "excl_imp_duplicate" := as.integer(ifelse(grepl("\\*",x$excl_imp_duplicate),1,0))]
+ 
   return(x[])
 }
 
@@ -131,9 +151,10 @@ iarccrgtools_dataset <- function(
     x = x, required_names = unname(nc_col_nms)
   )
   iarc_col_nms <- names(nc_col_nms)
-  if (any(!iarc_col_nms %in% names(template))) {
-    stop("internal error: mis-specified IARC CRG Tools column names: ",
-         deparse(setdiff(names(template), iarc_col_nms)))
+  if (!identical(sort(iarc_col_nms), sort(names(template)))) {
+    stop("internal error: mis-specified IARC CRG Tools column names; ",
+         "iarc_col_nms = ", deparse(sort(iarc_col_nms)), "; ",
+         "sort(names(template)) = ", deparse(sort(names(template))))
   }
   nc_col_nms <- unname(nc_col_nms)
   iarc_data <- data.table::setDT(lapply(seq_along(nc_col_nms), function(j) {

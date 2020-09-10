@@ -179,7 +179,7 @@ assert_column_is_valid <- function(x, column_name) {
 #' @export
 test_column_is_valid <- function(x, column_name) {
   report_df <- report_column_is_valid(x = x, column_name = column_name)
-  all(report_dt[["pass"]])
+  all(report_df[["pass"]])
 }
 
 report_funs_by_column_format <- list(

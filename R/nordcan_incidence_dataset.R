@@ -1,12 +1,14 @@
 
 #' @importFrom utils sessionInfo
 report_to_log <- function(
+  x,
   report_df,
   log_file_path = NULL,
   log_to = c("console", "file", "output")[1L],
   format = c("R", "markdown")[1L]
 ) {
   # TODO: implement option to use format = "markdown";
+  dbc::assert_is_data.frame(x)
   dbc::assert_is_data.frame_with_required_names(
     report_df, required_names = c("test", "pass", "message")
   )
