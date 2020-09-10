@@ -82,9 +82,9 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[
     i = icd10_dt,
     on = "tum",
-    j = "excl_imp_error" := suppressWarnings(i.icdo3_to_icd10_input.eO3to10),
+    j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
   ]
-   x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),"0","1")]
+   x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
  
     mp <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
@@ -96,9 +96,9 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[
     i = mp,
     on = "tum",
-    j = "excl_imp_duplicate" := suppressWarnings(i.multiple_primary_input.mul),
+    j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
   ]
-   x[, "excl_imp_duplicate" := ifelse(grepl("\\*",x$excl_imp_duplicate),1,0)]
+   x[, "excl_imp_duplicate" := as.integer(ifelse(grepl("\\*",x$excl_imp_duplicate),1,0))]
  
   return(x[])
 }
