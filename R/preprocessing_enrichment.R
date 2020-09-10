@@ -100,6 +100,13 @@ enrich_nordcan_cancer_case_dataset <- function(
     j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
   ]
   x[, "excl_imp_duplicate" := as.integer(ifelse(grepl("\\*",x$excl_imp_duplicate),1,0))]
+    i.in_multiple_primary_input.exl <- NULL # this only to appease R CMD CHECK
+  x[
+    i = mp,
+    on = "tum",
+    j = "excl_imp_benign" := i.in_multiple_primary_input.exl,
+  ]
+  x[, "excl_imp_benign" := ifelse (excl_imp_benign,1L,0L)]
   
   x[, "excl_imp_total" := ifelse(rowSums(sapply(x[,grepl("excl",names(x))
     &!grepl("excl_imp_error",names(x))],'%in%',1))>0,1L,0L)]
