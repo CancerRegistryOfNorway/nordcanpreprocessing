@@ -4,6 +4,11 @@
 \alias{reports_assertions_tests}
 \alias{report_dataset_is_valid}
 \alias{assert_dataset_is_valid}
+\alias{assert_processed_cancer_record_dataset_is_valid}
+\alias{assert_unprocessed_cancer_record_dataset_is_valid}
+\alias{assert_general_population_size_dataset_is_valid}
+\alias{assert_general_population_death_count_dataset_is_valid}
+\alias{assert_national_population_life_table_is_valid}
 \alias{test_dataset_is_valid}
 \alias{report_dataset_columns_are_valid}
 \alias{assert_dataset_columns_are_valid}
@@ -16,6 +21,16 @@
 report_dataset_is_valid(x, dataset_name)
 
 assert_dataset_is_valid(x, dataset_name)
+
+assert_processed_cancer_record_dataset_is_valid(x, dataset_name)
+
+assert_unprocessed_cancer_record_dataset_is_valid(x, dataset_name)
+
+assert_general_population_size_dataset_is_valid(x, dataset_name)
+
+assert_general_population_death_count_dataset_is_valid(x, dataset_name)
+
+assert_national_population_life_table_is_valid(x, dataset_name)
 
 test_dataset_is_valid(x, dataset_name)
 

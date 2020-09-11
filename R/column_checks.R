@@ -55,6 +55,67 @@ assert_dataset_is_valid <- function(
   dbc::report_to_assertion(report_df)
 }
 
+#' @rdname reports_assertions_tests
+#' @export
+#' @importFrom dbc report_to_assertion
+assert_processed_cancer_record_dataset_is_valid <- function(
+  x,
+  dataset_name
+) {
+  report_df <- report_dataset_is_valid(
+    x = x, dataset_name = "processed_cancer_record_dataset"
+  )
+  dbc::report_to_assertion(report_df)
+}
+#' @rdname reports_assertions_tests
+#' @export
+#' @importFrom dbc report_to_assertion
+assert_unprocessed_cancer_record_dataset_is_valid <- function(
+  x,
+  dataset_name
+) {
+  report_df <- report_dataset_is_valid(
+    x = x, dataset_name = "unprocessed_cancer_record_dataset"
+  )
+  dbc::report_to_assertion(report_df)
+}
+#' @rdname reports_assertions_tests
+#' @export
+#' @importFrom dbc report_to_assertion
+assert_general_population_size_dataset_is_valid <- function(
+  x,
+  dataset_name
+) {
+  report_df <- report_dataset_is_valid(
+    x = x, dataset_name = "general_population_size_dataset"
+  )
+  dbc::report_to_assertion(report_df)
+}
+#' @rdname reports_assertions_tests
+#' @export
+#' @importFrom dbc report_to_assertion
+assert_general_population_death_count_dataset_is_valid <- function(
+  x,
+  dataset_name
+) {
+  report_df <- report_dataset_is_valid(
+    x = x, dataset_name = "general_population_death_count_dataset"
+  )
+  dbc::report_to_assertion(report_df)
+}
+#' @rdname reports_assertions_tests
+#' @export
+#' @importFrom dbc report_to_assertion
+assert_national_population_life_table_is_valid <- function(
+  x,
+  dataset_name
+) {
+  report_df <- report_dataset_is_valid(
+    x = x, dataset_name = "national_population_life_table"
+  )
+  dbc::report_to_assertion(report_df)
+}
+
 
 #' @rdname reports_assertions_tests
 #' @export
