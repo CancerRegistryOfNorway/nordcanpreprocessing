@@ -108,7 +108,7 @@ enrich_nordcan_cancer_case_dataset <- function(
 #' Pass NORDCAN cancer record dataset to IARC CRG Tools from R.
 
 #' @importFrom iarccrgtools create_example
-#' @importFrom nordcancore nordcan_column_name_set_names nordcan_column_name_set
+#' @importFrom nordcancore nordcan_metadata_column_name_set_names nordcan_metadata_column_name_set
 #' @importFrom data.table setDT setnames
 #' @export
 #' @param x `[data.table]` (mandatory, no default)
@@ -124,13 +124,13 @@ enrich_nordcan_cancer_case_dataset <- function(
 #' @rdname iarccrgtools
 #' @importFrom iarccrgtools create_example
 #' @importFrom nordcancore nordcan_iarccrgtools_tool_names
-#' nordcan_column_name_set
+#' nordcan_metadata_column_name_set
 #' @importFrom data.table setDT setnames
 #' @details
 #' - `iarccrgtools_dataset` collects a dataset from `x` that corresponds to the
 #'   requirements of the appropriate tool given in `tool_name`;
 #'   see `[iarccrgtools::create_example]` for the formats of each column, and
-#'   use `[nordcancore::nordcan_column_name_set]` to see which columns are used
+#'   use `[nordcancore::nordcan_metadata_column_name_set]` to see which columns are used
 #' @export
 iarccrgtools_dataset <- function(
   x,
@@ -144,7 +144,7 @@ iarccrgtools_dataset <- function(
   )
   template <- iarccrgtools::create_example(paste0("mandatory_", tool_name),
                                             n.rows = 10L)
-  nc_col_nms <- nordcancore::nordcan_column_name_set(
+  nc_col_nms <- nordcancore::nordcan_metadata_column_name_set(
     paste0("column_name_set_iarccrgtools_mandatory_", tool_name)
   )
   dbc::assert_is_data.frame_with_required_names(
@@ -208,7 +208,7 @@ iarccrgtools_tool <- function(
     tool.results = iarc_results
   )
   data.table::setkeyv(iarc_dt, "record_id")
-  col_nms <- nordcancore::nordcan_column_name_set(
+  col_nms <- nordcancore::nordcan_metadata_column_name_set(
     paste0("column_name_set_iarccrgtools_mandatory_", tool_name)
   )
   iarc_col_nms <- names(col_nms)

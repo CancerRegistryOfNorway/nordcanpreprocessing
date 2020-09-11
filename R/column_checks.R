@@ -36,7 +36,7 @@ report_dataset_is_valid <- function(
   )
   report_dataset_columns_are_valid(
     x = x,
-    nordcancore::nordcan_column_name_set(
+    nordcancore::nordcan_metadata_column_name_set(
       paste0("column_name_set_", dataset_name)
     )
   )
@@ -253,10 +253,10 @@ test_funs_by_column_format <- lapply(
 
 
 report_funs_by_column_name <- lapply(
-  nordcancore::nordcan_column_name_set("column_name_set_all"),
+  nordcancore::nordcan_metadata_column_name_set("column_name_set_all"),
   function(column_name) {
     report_fun <- function(x, column_name) {
-      specs <- nordcancore::nordcan_column_specifications(column_name)
+      specs <- nordcancore::nordcan_metadata_column_specifications(column_name)
       format <- specs[["format"]]
       report_funs_by_column_format[[format]](x = x, column_name = column_name)
     }
@@ -265,14 +265,14 @@ report_funs_by_column_name <- lapply(
   }
 )
 names(report_funs_by_column_name) <-
-  nordcancore::nordcan_column_name_set("column_name_set_all")
+  nordcancore::nordcan_metadata_column_name_set("column_name_set_all")
 
 
 assert_funs_by_column_name <- lapply(
-  nordcancore::nordcan_column_name_set("column_name_set_all"),
+  nordcancore::nordcan_metadata_column_name_set("column_name_set_all"),
   function(column_name) {
     assert_fun <- function(x, column_name) {
-      specs <- nordcancore::nordcan_column_specifications(column_name)
+      specs <- nordcancore::nordcan_metadata_column_specifications(column_name)
       format <- specs[["format"]]
       assert_funs_by_column_format[[format]](x = x, column_name = column_name)
     }
@@ -285,10 +285,10 @@ names(report_funs_by_column_name) <- names(report_funs_by_column_name)
 
 
 test_funs_by_column_name <- lapply(
-  nordcancore::nordcan_column_name_set("column_name_set_all"),
+  nordcancore::nordcan_metadata_column_name_set("column_name_set_all"),
   function(column_name) {
     test_fun <- function(x, column_name) {
-      specs <- nordcancore::nordcan_column_specifications(column_name)
+      specs <- nordcancore::nordcan_metadata_column_specifications(column_name)
       format <- specs[["format"]]
       test_funs_by_column_format[[format]](x = x, column_name = column_name)
     }
@@ -304,16 +304,16 @@ incidence_columns_check_Date        <- function(data_input, column_name) {
   if(all(grepl("[0-9]{4}-[0-1][[0-9]-[0-3][0-9]", data_input[,column_name]))) {
     cat("Date format of variable '%s' is correct!\n", column_name)
 
-    if (!is.null(nordcancore::nordcan_column_specifications(column_name)$min)) {
-      if (all(as.Date(data_input[,column_name]) >= as.Date(nordcancore::nordcan_column_specifications(column_name)$min))) {
+    if (!is.null(nordcancore::nordcan_metadata_column_specifications(column_name)$min)) {
+      if (all(as.Date(data_input[,column_name]) >= as.Date(nordcancore::nordcan_metadata_column_specifications(column_name)$min))) {
         cat("Earliest value of variable %s passed checking!\n", column_name)
       } else {
         cat("Earliest value of variable %s not passed checking! \n", column_name)
       }
     }
 
-    if (!is.null(nordcancore::nordcan_column_specifications(column_name)$max)) {
-      if (all(as.Date(data_input[,column_name]) >= as.Date(nordcancore::nordcan_column_specifications(column_name)$max))) {
+    if (!is.null(nordcancore::nordcan_metadata_column_specifications(column_name)$max)) {
+      if (all(as.Date(data_input[,column_name]) >= as.Date(nordcancore::nordcan_metadata_column_specifications(column_name)$max))) {
         cat("Earliest value of variable %s passed checking!\n", column_name)
       } else {
         cat("Earliest value of variable %s not passed checking!\n", column_name)
@@ -328,7 +328,7 @@ incidence_columns_check_Date        <- function(data_input, column_name) {
 }
 
 incidence_columns_check_Categorical <- function(data_input, column_name) {
-  if (all(data_input[,column_name] %in%  nordcancore::nordcan_column_specifications(column_name)$levels)) {
+  if (all(data_input[,column_name] %in%  nordcancore::nordcan_metadata_column_specifications(column_name)$levels)) {
     cat (sprintf( "All values of variable %s are valid\n", column_name))
   } else {
     cat (sprintf( "Variable %s contains invalid values\n", column_name))
@@ -340,8 +340,8 @@ incidence_columns_check_Numeric     <- function(data_input, column_name) {
   if (all(!is.na(as.numeric(data_input[,column_name])))) {
     cat (sprintf("All values of variable %s are numeric\n", column_name))
 
-    if (!is.null(nordcancore::nordcan_column_specifications(column_name)$min)) {
-      if (all(data_input[,column_name] >= nordcancore::nordcan_column_specifications(column_name)$min)) {
+    if (!is.null(nordcancore::nordcan_metadata_column_specifications(column_name)$min)) {
+      if (all(data_input[,column_name] >= nordcancore::nordcan_metadata_column_specifications(column_name)$min)) {
         cat("Minimum value of variable %s passed checking\n", column_name)
       } else {
         cat("Minimum value of variable %s not passed checking\n", column_name)
@@ -349,8 +349,8 @@ incidence_columns_check_Numeric     <- function(data_input, column_name) {
     }
 
 
-    if (!is.null(nordcancore::nordcan_column_specifications(column_name)$max)) {
-      if (all(data_input[,column_name] <= nordcancore::nordcan_column_specifications(column_name)$max)) {
+    if (!is.null(nordcancore::nordcan_metadata_column_specifications(column_name)$max)) {
+      if (all(data_input[,column_name] <= nordcancore::nordcan_metadata_column_specifications(column_name)$max)) {
         cat("Maximun value of variable %s passed checking\n", column_name)
       } else {
         cat("Maximun value of variable %s not passed checking\n", column_name)
@@ -370,9 +370,9 @@ incidence_columns_check_Numeric     <- function(data_input, column_name) {
 
 
 incidence_columns_check_region      <- function(data_input, column_name) {
-  region <- nordcancore::nordcan_column_specifications(column_name)$table
+  region <- nordcancore::nordcan_metadata_column_specifications(column_name)$table
 
-  if (all(data_input[, column_name] %in% nordcancore::nordcan_column_specifications(column_name)$table$Value)) {
+  if (all(data_input[, column_name] %in% nordcancore::nordcan_metadata_column_specifications(column_name)$table$Value)) {
     cat("All region codes are valid! \n")
 
     if(length(unique(substr(data_input[, column_name] %in% region$Value, 1,1))) != 1) {
@@ -385,6 +385,6 @@ incidence_columns_check_region      <- function(data_input, column_name) {
 
 
 incidence_columns_check_Other       <- function(data_input, column_name) {
-  cat(nordcancore::nordcan_column_specifications(column_name)$message)
+  cat(nordcancore::nordcan_metadata_column_specifications(column_name)$message)
 }
 

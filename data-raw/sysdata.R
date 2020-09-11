@@ -8,7 +8,7 @@ reports_on_column_name_sets[
 invisible(lapply(reports_on_column_name_sets[["col_nm_set"]], function(col_nms){
   dbc::assert_vector_elems_are_in_set(
     col_nms,
-    set = nordcancore::nordcan_column_name_set("column_name_set_all")
+    set = nordcancore::nordcan_metadata_column_name_set("column_name_set_all")
   )
 }))
 
