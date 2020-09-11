@@ -59,8 +59,7 @@ assert_dataset_is_valid <- function(
 #' @export
 #' @importFrom dbc report_to_assertion
 assert_processed_cancer_record_dataset_is_valid <- function(
-  x,
-  dataset_name
+  x
 ) {
   report_df <- report_dataset_is_valid(
     x = x, dataset_name = "processed_cancer_record_dataset"
@@ -71,8 +70,7 @@ assert_processed_cancer_record_dataset_is_valid <- function(
 #' @export
 #' @importFrom dbc report_to_assertion
 assert_unprocessed_cancer_record_dataset_is_valid <- function(
-  x,
-  dataset_name
+  x
 ) {
   report_df <- report_dataset_is_valid(
     x = x, dataset_name = "unprocessed_cancer_record_dataset"
@@ -83,8 +81,7 @@ assert_unprocessed_cancer_record_dataset_is_valid <- function(
 #' @export
 #' @importFrom dbc report_to_assertion
 assert_general_population_size_dataset_is_valid <- function(
-  x,
-  dataset_name
+  x
 ) {
   report_df <- report_dataset_is_valid(
     x = x, dataset_name = "general_population_size_dataset"
@@ -95,8 +92,7 @@ assert_general_population_size_dataset_is_valid <- function(
 #' @export
 #' @importFrom dbc report_to_assertion
 assert_general_population_death_count_dataset_is_valid <- function(
-  x,
-  dataset_name
+  x
 ) {
   report_df <- report_dataset_is_valid(
     x = x, dataset_name = "general_population_death_count_dataset"
@@ -107,8 +103,7 @@ assert_general_population_death_count_dataset_is_valid <- function(
 #' @export
 #' @importFrom dbc report_to_assertion
 assert_national_population_life_table_is_valid <- function(
-  x,
-  dataset_name
+  x
 ) {
   report_df <- report_dataset_is_valid(
     x = x, dataset_name = "national_population_life_table"
@@ -223,8 +218,11 @@ report_column_is_valid <- function(x, column_name) {
     column_name,
     set = names(report_funs_by_column_name)
   )
+  if (!column_name %in% names(report_funs_by_column_name)) {
+    stop("Internal error: no report function defined for column_name = ",
+         deparse(column_name))
+  }
   report_fun <- report_funs_by_column_name[[column_name]]
-  message(column_name)
   report_fun(x = x, column_name = column_name)
 }
 
@@ -245,27 +243,41 @@ test_column_is_valid <- function(x, column_name) {
 
 report_funs_by_column_format <- list(
   ID = function(x, column_name) {
+    column_specification <- nordcancore::nordcan_metadata_column_specifications(
+      column_name
+    )
     dataset_env <- as.environment(x)
-    parent.env(dataset_env) <- parent.frame(1L)
+    parent.env(dataset_env) <- environment()
     dbc::tests_to_report(
       tests = c(
-        paste0("nchar(", column_name, ") <= 50L")
+        paste0("nchar(", column_name, ") <= 50L"),
+        "!duplicated(x)"
       ),
       fail_messages = c(
         paste0(
           "Column \"${column_name}\" has values that contain more than ",
           "50 characters (digits); positions of first five invalid values: ",
           "${utils::head(wh_fail, 5L)}"
+        ),
+        paste0(
+          "${column_name} values were duplicated; first five positions of ",
+          "duplicates: ${utils::head(wh_fail, 5L)}"
         )
       ),
-      pass_messages = "Column \"${column_name}\" passed checks.",
+      pass_messages = c(
+        "Column \"${column_name}\" passed width check.",
+        "Column \"${column_name}\" had no duplicates."
+      ),
       env = dataset_env
     )
   },
   Date = function(x, column_name) {
     dataset_env <- as.environment(x)
-    parent.env(dataset_env) <- parent.frame(1L)
-    dbc::tests_to_report(
+    parent.env(dataset_env) <- environment()
+    column_specification <- nordcancore::nordcan_metadata_column_specifications(
+      column_name
+    )
+    report_df <- dbc::tests_to_report(
       tests = c(
         paste0("inherits(", column_name, ", \"Date\")"),
         paste0("grepl(\"[0-9]{4}-[0-1][[0-9]-[0-3][0-9]\", ",column_name,")")
@@ -280,10 +292,127 @@ report_funs_by_column_format <- list(
       ),
       pass_messages = c(
         "Column \"${column_name}\" has correct class.",
-        "Column \"${column_name}\" passed checks."
+        "Column \"${column_name}\" is formatted correctly."
       ),
       env = dataset_env
     )
+
+    min <- column_specification[["min"]]
+    if (!is.null(min)) {
+      report_df <- rbind(
+        report_df,
+        dbc::tests_to_report(
+          tests = "x[[column_name]] >= min",
+          fail_messages = paste0(
+            "Column ${column_name} had values less than ${min}; ",
+            "positions of first five invalid values: ",
+            "${utils::head(wh_fail, 5L)}"
+          ),
+          pass_messages = paste0(
+            "All column ${column_name} values were >= ${min}"
+          ),
+          env = dataset_env
+        )
+      )
+    }
+    max <- column_specification[["max"]]
+    if (!is.null(max)) {
+      report_df <- rbind(
+        report_df,
+        dbc::tests_to_report(
+          tests = "x[[column_name]] <= max",
+          fail_messages = paste0(
+            "Column ${column_name} had values > ${max}; ",
+            "positions of first five invalid values: ",
+            "${utils::head(wh_fail, 5L)}"
+          ),
+          pass_messages = paste0(
+            "All column ${column_name} values were <= ${max}"
+          ),
+          env = dataset_env
+        )
+      )
+    }
+
+    return(report_df)
+  },
+  Numeric = function(x, column_name) {
+    column_specification <- nordcancore::nordcan_metadata_column_specifications(
+      column_name
+    )
+    report_df <- dbc::report_is_number_nonNA_vector(
+      x = x[[column_name]],
+      x_nm = paste0("x$", column_name)
+    )
+    min <- column_specification[["min"]]
+    max <- column_specification[["max"]]
+    report_df <- rbind(
+      report_df,
+      dbc::tests_to_report(
+        tests = c(
+          "x[[column_name]] >= min",
+          "x[[column_name]] <= max"
+        ),
+        fail_messages = c(
+          paste0(
+            "${column_name} had values < ${min}; first five positions of ",
+            "invalid values: ${utils::head(wh_fail, 5L)}"
+          ),
+          paste0(
+            "${column_name} had values > ${max}; first five positions of ",
+            "invalid values: ${utils::head(wh_fail, 5L)}"
+          )
+        ),
+        pass_messages = c(
+          "All ${column_name} values were >= ${min}",
+          "All ${column_name} values were <= ${max}"
+        )
+      )
+    )
+    return(report_df[])
+  },
+  Categorical = function(x, column_name) {
+    column_specification <- nordcancore::nordcan_metadata_column_specifications(
+      column_name
+    )
+    levels <- column_specification[["levels"]]
+    dbc::report_vector_elems_are_in_set(
+      x = x[[column_name]],
+      x_nm = column_name,
+      set = levels
+    )
+  },
+  String = function(x, column_name) {
+    column_specification <- nordcancore::nordcan_metadata_column_specifications(
+      column_name
+    )
+    dataset_env <- as.environment(x)
+    parent.env(dataset_env) <- environment()
+    levels <- column_specification[["levels"]]
+    dbc::tests_to_report(
+      tests = paste0("nchar(",column_name,") <= 50L"),
+      fail_messages = paste0(
+        "some elements of ${column_name} had more than 50 characters; first ",
+        "five overlong elements: ${utils::head(wh_fail, 5L)}"
+      ),
+      pass_messages = paste0(
+        "All elements of column ${column_name} had at most 50 characters."
+      ),
+      env = dataset_env
+    )
+  },
+  Other = function(x, column_name) {
+    column_specification <- nordcancore::nordcan_metadata_column_specifications(
+      column_name
+    )
+    msg <- column_specification[["message"]]
+    format <- "Other"
+    report_df <- dbc::tests_to_report(
+      tests = "format == \"Other\"",
+      fail_messages = "internal error: expected format to be \"Other\"",
+      pass_messages = "No checks defined for column ${column_name}"
+    )
+    return(report_df)
   }
 )
 
@@ -319,6 +448,10 @@ report_funs_by_column_name <- lapply(
     report_fun <- function(x, column_name) {
       specs <- nordcancore::nordcan_metadata_column_specifications(column_name)
       format <- specs[["format"]]
+      if (!format %in% names(report_funs_by_column_format)) {
+        stop("Internal error: no report function defined for format = ",
+             deparse(format))
+      }
       report_funs_by_column_format[[format]](x = x, column_name = column_name)
     }
     formals(report_fun)[["column_name"]] <- column_name
@@ -359,89 +492,5 @@ test_funs_by_column_name <- lapply(
 )
 names(test_funs_by_column_name) <- names(report_funs_by_column_name)
 
-
-incidence_columns_check_String      <- function(data_input, column_name) {
-  if(all(nchar(data_input[,column_name]) <= 50)) {
-    cat(sprintf("Variable '%s' passed checking!\n", column_name))
-  } else {
-    id <- which(nchar(data_input[,column_name]) > 50)
-    cat(sprintf("Variable '%s' has %s records can not pass the checking due to their values contains more than 50 characters.\n", column_name, length(id)))
-  }
-}
-incidence_columns_check_ID          <- function(data_input, column_name) {
-  id <- which(duplicated(data_input[,column_name]))
-  if (length(id) == 0) {
-    cat(sprintf("Variable '%s' passed checking!\n", column_name))
-  } else {
-    cat(sprintf("Variable '%s' has %s records can not pass the checking (duplicated values).\n", column_name, length(id)))
-  }
-}
-incidence_columns_check_Date        <- function(data_input, column_name) {
-  if(all(grepl("[0-9]{4}-[0-1][[0-9]-[0-3][0-9]", data_input[,column_name]))) {
-    cat("Date format of variable '%s' is correct!\n", column_name)
-    if (!is.null(nordcancore::nordcan_metadata_column_specifications(column_name)$min)) {
-      if (all(as.Date(data_input[,column_name]) >= as.Date(nordcancore::nordcan_metadata_column_specifications(column_name)$min))) {
-        cat("Earliest value of variable %s passed checking!\n", column_name)
-      } else {
-        cat("Earliest value of variable %s not passed checking! \n", column_name)
-      }
-    }
-    if (!is.null(nordcancore::nordcan_metadata_column_specifications(column_name)$max)) {
-      if (all(as.Date(data_input[,column_name]) >= as.Date(nordcancore::nordcan_metadata_column_specifications(column_name)$max))) {
-        cat("Earliest value of variable %s passed checking!\n", column_name)
-      } else {
-        cat("Earliest value of variable %s not passed checking!\n", column_name)
-      }
-    }
-  } else {
-    id <- which(!grepl("[0-9]{4}-[0-1][[0-9]-[0-3][0-9]", data_input[,column_name]))
-    cat(sprintf("The date format of variable '%s' is not correct, all valide values should be in formation: 'yyyy-mm-dd' \n", column_name))
-  }
-}
-incidence_columns_check_Categorical <- function(data_input, column_name) {
-  if (all(data_input[,column_name] %in%  nordcancore::nordcan_metadata_column_specifications(column_name)$levels)) {
-    cat (sprintf( "All values of variable %s are valid\n", column_name))
-  } else {
-    cat (sprintf( "Variable %s contains invalid values\n", column_name))
-  }
-}
-incidence_columns_check_Numeric     <- function(data_input, column_name) {
-  if (all(!is.na(as.numeric(data_input[,column_name])))) {
-    cat (sprintf("All values of variable %s are numeric\n", column_name))
-    if (!is.null(nordcancore::nordcan_metadata_column_specifications(column_name)$min)) {
-      if (all(data_input[,column_name] >= nordcancore::nordcan_metadata_column_specifications(column_name)$min)) {
-        cat("Minimum value of variable %s passed checking\n", column_name)
-      } else {
-        cat("Minimum value of variable %s not passed checking\n", column_name)
-      }
-    }
-
-    if (!is.null(nordcancore::nordcan_metadata_column_specifications(column_name)$max)) {
-      if (all(data_input[,column_name] <= nordcancore::nordcan_metadata_column_specifications(column_name)$max)) {
-        cat("Maximun value of variable %s passed checking\n", column_name)
-      } else {
-        cat("Maximun value of variable %s not passed checking\n", column_name)
-      }
-    }
-  } else {
-    cat (sprintf("Variable %s contains values which are not numeric\n", column_name))
-  }
-}
-incidence_columns_check_region      <- function(data_input, column_name) {
-  region <- nordcancore::nordcan_metadata_column_specifications(column_name)$table
-
-  if (all(data_input[, column_name] %in% nordcancore::nordcan_metadata_column_specifications(column_name)$table$Value)) {
-    cat("All region codes are valid! \n")
-
-    if(length(unique(substr(data_input[, column_name] %in% region$Value, 1,1))) != 1) {
-      cat("Some region codes may come from different countries/regions!\n")
-    }
-  } else {
-    cat("Region codes contain unvalid value(s). \n")
-  }
-}
-incidence_columns_check_Other       <- function(data_input, column_name) {
-  cat(nordcancore::nordcan_metadata_column_specifications(column_name)$message)
-}
 
 
