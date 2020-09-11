@@ -65,6 +65,7 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,"1","0")]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,"1","0")]
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,"1","0")]
+  x[, "excl_imp_entitymissing" := ifelse (is.na(x$entity),1L,0L)]
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
@@ -82,9 +83,9 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[
     i = icd10_dt,
     on = "tum",
-    j = "excl_imp_error" := suppressWarnings(i.icdo3_to_icd10_input.eO3to10),
+    j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
   ]
-   x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),"0","1")]
+   x[, "excl_imp_icd10conversion" := as.integer(ifelse (is.na(x$excl_imp_error),0,1))]
  
     mp <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
@@ -96,10 +97,21 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[
     i = mp,
     on = "tum",
-    j = "excl_imp_duplicate" := suppressWarnings(i.multiple_primary_input.mul),
+    j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
   ]
-   x[, "excl_imp_duplicate" := ifelse(grepl("\\*",x$excl_imp_duplicate),1,0)]
- 
+  x[, "excl_imp_duplicate" := as.integer(ifelse(grepl("\\*",x$excl_imp_duplicate),1,0))]
+    i.in_multiple_primary_input.exl <- NULL # this only to appease R CMD CHECK
+  x[
+    i = mp,
+    on = "tum",
+    j = "excl_imp_benign" := i.in_multiple_primary_input.exl,
+  ]
+  x[, "excl_imp_benign" := ifelse(excl_imp_benign,1L,0L)]
+  
+   x[, "excl_imp_total" :=
+  ifelse(rowSums(sapply(x[, .SD, .SDcols=names(x)[which(grepl("excl",names(x))&
+  !grepl("excl_imp_error",names(x)))]],'%in%',1))>0,1L,0L)]
+
   return(x[])
 }
 
