@@ -39,8 +39,8 @@ dataset to report / assert / test on}
 \item{dataset_name}{\verb{[character]} (mandatory, no default)
 
 name of a NORDCAN dataset; must be one of the elements of output of
-\code{nordcancore::nordcan_dataset_names()}; therefore see also
-\verb{[nordcancore::nordcan_dataset_names]}}
+\code{nordcancore::nordcan_metadata_dataset_names()}; therefore see also
+\verb{[nordcancore::nordcan_metadata_dataset_names]}}
 
 \item{column_names}{\verb{[character]} (mandatory, no default)
 

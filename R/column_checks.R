@@ -22,8 +22,8 @@
 #' @param dataset_name `[character]` (mandatory, no default)
 #'
 #' name of a NORDCAN dataset; must be one of the elements of output of
-#' `nordcancore::nordcan_dataset_names()`; therefore see also
-#' `[nordcancore::nordcan_dataset_names]`
+#' `nordcancore::nordcan_metadata_dataset_names()`; therefore see also
+#' `[nordcancore::nordcan_metadata_dataset_names]`
 #' @export
 #' @importFrom dbc assert_is_character_nonNA_atom assert_atom_is_in_set
 report_dataset_is_valid <- function(
@@ -32,7 +32,7 @@ report_dataset_is_valid <- function(
 ) {
   dbc::assert_is_character_nonNA_atom(dataset_name)
   dbc::assert_atom_is_in_set(
-    x = dataset_name, set = nordcancore::nordcan_dataset_names()
+    x = dataset_name, set = nordcancore::nordcan_metadata_dataset_names()
   )
   report_dataset_columns_are_valid(
     x = x,
