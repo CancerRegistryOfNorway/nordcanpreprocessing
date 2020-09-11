@@ -108,8 +108,10 @@ enrich_nordcan_cancer_case_dataset <- function(
   ]
   x[, "excl_imp_benign" := ifelse(excl_imp_benign,1L,0L)]
   
-  x[, "excl_imp_total" := ifelse(rowSums(sapply(x[,grepl("excl",names(x))
-    &!grepl("excl_imp_error",names(x))],'%in%',1))>0,1L,0L)]
+   x[, "excl_imp_total" :=
+  ifelse(rowSums(sapply(x[, .SD, .SDcols=names(x)[which(grepl("excl",names(x))&
+  !grepl("excl_imp_error",names(x)))]],'%in%',1))>0,1L,0L)]
+
   return(x[])
 }
 
