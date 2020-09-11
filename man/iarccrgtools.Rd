@@ -38,7 +38,7 @@ Pass NORDCAN cancer record dataset to IARC CRG Tools from R.
 \item \code{iarccrgtools_dataset} collects a dataset from \code{x} that corresponds to the
 requirements of the appropriate tool given in \code{tool_name};
 see \verb{[iarccrgtools::create_example]} for the formats of each column, and
-use \verb{[nordcancore::nordcan_column_name_set]} to see which columns are used
+use \verb{[nordcancore::nordcan_metadata_column_name_set]} to see which columns are used
 }
 
 \itemize{
