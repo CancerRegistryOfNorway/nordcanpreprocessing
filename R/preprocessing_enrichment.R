@@ -36,7 +36,7 @@
 # "excl_surv_autopsy","excl_surv_negativefou","excl_surv_zerofou","excl_imp_error"))]
 
 
-#' @importFrom data.table setDT copy := month year
+#' @importFrom data.table setDT copy := month year .SD
 enrich_nordcan_cancer_case_dataset <- function(
   x,
   iarccrgtools_exe_path,
@@ -86,7 +86,7 @@ enrich_nordcan_cancer_case_dataset <- function(
     j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
   ]
    x[, "excl_imp_icd10conversion" := as.integer(ifelse (is.na(x$excl_imp_error),0,1))]
- 
+
     mp <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
     tool_name = "multiple_primary",
@@ -106,11 +106,11 @@ enrich_nordcan_cancer_case_dataset <- function(
     on = "tum",
     j = "excl_imp_benign" := i.in_multiple_primary_input.exl,
   ]
-  x[, "excl_imp_benign" := ifelse(excl_imp_benign,1L,0L)]
-  
+  x[, "excl_imp_benign" := ifelse(x$excl_imp_benign,1L,0L)]
+
   excl_ind_col_nms <- names(x)[grepl("excl", names(x))]
   excl_ind_col_nms <- setdiff(excl_ind_col_nms, "excl_imp_error")
-  x[, "excl_imp_total" := as.integer(rowSums(.SD) > 0L), .SDcols = excl_ind_col_nms] 
+  x[, "excl_imp_total" := as.integer(rowSums(.SD) > 0L), .SDcols = excl_ind_col_nms]
 
   return(x[])
 }
