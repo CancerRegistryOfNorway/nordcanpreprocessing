@@ -60,11 +60,11 @@ enrich_nordcan_cancer_case_dataset <- function(
   levels(x$agegroup)=c(1:21)
   x[, "period" := substr(cut(x$yoi,seq(5*floor(min(x$yoi)/5),
   5*ceiling(max(x$yoi)/5),5),right=FALSE),2,5)]
-  x[, "excl_surv_age" := ifelse (x$age_year<90,"0","1")]
-  x[, "excl_surv_dco" := ifelse (x$bod==0,"1","0")]
-  x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,"1","0")]
-  x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,"1","0")]
-  x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,"1","0")]
+  x[, "excl_surv_age" := ifelse (x$age_year<90,0L,1L)]
+  x[, "excl_surv_dco" := ifelse (x$bod==0,1L,0L)]
+  x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,1L,0L)]
+  x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
+  x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,1L,0L)]
   x[, "excl_imp_entitymissing" := ifelse (is.na(x$entity),1L,0L)]
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
