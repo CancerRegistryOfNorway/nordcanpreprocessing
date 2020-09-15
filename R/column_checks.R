@@ -371,6 +371,41 @@ report_funs_by_column_format <- list(
     )
     return(report_df[])
   },
+  Integer = function(x, column_name) {
+    column_specification <- nordcancore::nordcan_metadata_column_specifications(
+      column_name
+    )
+    report_df <- dbc::report_is_number_nonNA_vector(
+      x = x[[column_name]],
+      x_nm = paste0("x$", column_name)
+    )
+    min <- column_specification[["min"]]
+    max <- column_specification[["max"]]
+    report_df <- rbind(
+      report_df,
+      dbc::tests_to_report(
+        tests = c(
+          "x[[column_name]] >= min",
+          "x[[column_name]] <= max"
+        ),
+        fail_messages = c(
+          paste0(
+            "${column_name} had values < ${min}; first five positions of ",
+            "invalid values: ${utils::head(wh_fail, 5L)}"
+          ),
+          paste0(
+            "${column_name} had values > ${max}; first five positions of ",
+            "invalid values: ${utils::head(wh_fail, 5L)}"
+          )
+        ),
+        pass_messages = c(
+          "All ${column_name} values were >= ${min}",
+          "All ${column_name} values were <= ${max}"
+        )
+      )
+    )
+    return(report_df[])
+  },
   Categorical = function(x, column_name) {
     column_specification <- nordcancore::nordcan_metadata_column_specifications(
       column_name
