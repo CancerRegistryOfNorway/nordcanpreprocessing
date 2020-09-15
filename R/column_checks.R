@@ -436,6 +436,24 @@ report_funs_by_column_format <- list(
       env = dataset_env
     )
   },
+  "ICD-10" = function(x, column_name) {
+    column_specification <- nordcancore::nordcan_metadata_column_specifications(
+      column_name
+    )
+    report_df <- dbc::tests_to_report(
+      tests = paste0(
+        "grepl(\"[A-Z][0-9]+\", ", column_name,")"
+      ),
+      fail_messages = paste0(
+        "Column ${column_name} has invalid values; valid values start with ",
+        "one uppercase letter and proceed with digits only, e.g. C0004 ",
+        "(and not e.g. c0004, C00.04, etc). positions of first five invalid ",
+        "values: ${utils::head(wh_fail, 5L)}",
+      ),
+      pass_messages = "Column ${column_name} is formatted correctly."
+    )
+    return(report_df)
+  },
   Other = function(x, column_name) {
     column_specification <- nordcancore::nordcan_metadata_column_specifications(
       column_name
