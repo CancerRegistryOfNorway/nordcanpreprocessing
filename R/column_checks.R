@@ -257,11 +257,11 @@ report_funs_by_column_format <- list(
         paste0(
           "Column \"${column_name}\" has values that contain more than ",
           "50 characters (digits); positions of first five invalid values: ",
-          "${utils::head(wh_fail, 5L)}"
+          "${deparse(utils::head(wh_fail, 5L))}"
         ),
         paste0(
           "${column_name} values were duplicated; first five positions of ",
-          "duplicates: ${utils::head(wh_fail, 5L)}"
+          "duplicates: ${deparse(utils::head(wh_fail, 5L))}"
         )
       ),
       pass_messages = c(
@@ -287,7 +287,7 @@ report_funs_by_column_format <- list(
         paste0(
           "Column \"${column_name}\" has values that contain more than ",
           "50 characters (digits); positions of first five invalid values: ",
-          "${utils::head(wh_fail, 5L)}"
+          "${deparse(utils::head(wh_fail, 5L))}"
         )
       ),
       pass_messages = c(
@@ -306,7 +306,7 @@ report_funs_by_column_format <- list(
           fail_messages = paste0(
             "Column ${column_name} had values less than ${min}; ",
             "positions of first five invalid values: ",
-            "${utils::head(wh_fail, 5L)}"
+            "${deparse(utils::head(wh_fail, 5L))}"
           ),
           pass_messages = paste0(
             "All column ${column_name} values were >= ${min}"
@@ -324,7 +324,7 @@ report_funs_by_column_format <- list(
           fail_messages = paste0(
             "Column ${column_name} had values > ${max}; ",
             "positions of first five invalid values: ",
-            "${utils::head(wh_fail, 5L)}"
+            "${deparse(utils::head(wh_fail, 5L))}"
           ),
           pass_messages = paste0(
             "All column ${column_name} values were <= ${max}"
@@ -356,11 +356,11 @@ report_funs_by_column_format <- list(
         fail_messages = c(
           paste0(
             "${column_name} had values < ${min}; first five positions of ",
-            "invalid values: ${utils::head(wh_fail, 5L)}"
+            "invalid values: ${deparse(utils::head(wh_fail, 5L))}"
           ),
           paste0(
             "${column_name} had values > ${max}; first five positions of ",
-            "invalid values: ${utils::head(wh_fail, 5L)}"
+            "invalid values: ${deparse(utils::head(wh_fail, 5L))}"
           )
         ),
         pass_messages = c(
@@ -391,11 +391,11 @@ report_funs_by_column_format <- list(
         fail_messages = c(
           paste0(
             "${column_name} had values < ${min}; first five positions of ",
-            "invalid values: ${utils::head(wh_fail, 5L)}"
+            "invalid values: ${deparse(utils::head(wh_fail, 5L))}"
           ),
           paste0(
             "${column_name} had values > ${max}; first five positions of ",
-            "invalid values: ${utils::head(wh_fail, 5L)}"
+            "invalid values: ${deparse(utils::head(wh_fail, 5L))}"
           )
         ),
         pass_messages = c(
@@ -428,7 +428,7 @@ report_funs_by_column_format <- list(
       tests = paste0("nchar(",column_name,") <= 50L"),
       fail_messages = paste0(
         "some elements of ${column_name} had more than 50 characters; first ",
-        "five overlong elements: ${utils::head(wh_fail, 5L)}"
+        "five overlong elements: ${deparse(utils::head(wh_fail, 5L))}"
       ),
       pass_messages = paste0(
         "All elements of column ${column_name} had at most 50 characters."
@@ -440,17 +440,21 @@ report_funs_by_column_format <- list(
     column_specification <- nordcancore::nordcan_metadata_column_specifications(
       column_name
     )
+    dataset_env <- as.environment(x)
+    parent.env(dataset_env) <- environment()
     report_df <- dbc::tests_to_report(
       tests = paste0(
-        "grepl(\"[A-Z][0-9]+\", ", column_name,")"
+        "is.na(", column_name,") | grepl(\"[A-Z][0-9]+\", ", column_name,")"
       ),
       fail_messages = paste0(
         "Column ${column_name} has invalid values; valid values start with ",
         "one uppercase letter and proceed with digits only, e.g. C0004 ",
         "(and not e.g. c0004, C00.04, etc). positions of first five invalid ",
-        "values: ${utils::head(wh_fail, 5L)}"
+        "values: ${deparse(utils::head(wh_fail, 5L))}; note that when the ",
+        "ICD-10 code is not known, it should be coded as NA."
       ),
-      pass_messages = "Column ${column_name} is formatted correctly."
+      pass_messages = "Column ${column_name} is formatted correctly.",
+      env = dataset_env
     )
     return(report_df)
   },
