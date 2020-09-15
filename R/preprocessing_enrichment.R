@@ -58,6 +58,7 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[x$autopsy == 1, "surv_time" := 0.0]
   x[, "agegroup" := cut(x$age_year, seq(0,5*round(max(x$age_year)/5),5),right=FALSE)]
   levels(x$agegroup)=c(1:21)
+  levels(x$agegroup)=ifelse(levels(x$agegroup) %in% c(19:21),21,levels(x$agegroup))
   x[, "period" := substr(cut(x$yoi,seq(5*floor(min(x$yoi)/5),
   5*ceiling(max(x$yoi)/5),5),right=FALSE),2,5)]
   x[, "excl_surv_age" := ifelse (x$age_year<90,0L,1L)]
