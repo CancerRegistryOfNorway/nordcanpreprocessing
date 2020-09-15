@@ -448,7 +448,7 @@ report_funs_by_column_format <- list(
         "Column ${column_name} has invalid values; valid values start with ",
         "one uppercase letter and proceed with digits only, e.g. C0004 ",
         "(and not e.g. c0004, C00.04, etc). positions of first five invalid ",
-        "values: ${utils::head(wh_fail, 5L)}",
+        "values: ${utils::head(wh_fail, 5L)}"
       ),
       pass_messages = "Column ${column_name} is formatted correctly."
     )
