@@ -65,7 +65,6 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,1L,0L)]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,1L,0L)]
-  x[, "excl_imp_entitymissing" := ifelse (is.na(x$entity),1L,0L)]
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
@@ -107,6 +106,12 @@ enrich_nordcan_cancer_case_dataset <- function(
     j = "excl_imp_benign" := i.in_multiple_primary_input.exl,
   ]
   x[, "excl_imp_benign" := ifelse(x$excl_imp_benign,1L,0L)]
+
+  icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
+  entity_col_nms <- nordcancore::nordcan_metadata_column_name_set("column_name_set_entity")
+  x <- merge(x, icd10_to_entity_dt, by = "icd10")
+
+  x[, "excl_imp_entitymissing" := ifelse (is.na(x$entity_level_30),1L,0L)]
 
   excl_ind_col_nms <- names(x)[grepl("excl", names(x))]
   excl_ind_col_nms <- setdiff(excl_ind_col_nms, "excl_imp_error")
