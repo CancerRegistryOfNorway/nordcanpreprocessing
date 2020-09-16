@@ -56,12 +56,16 @@ enrich_nordcan_cancer_case_dataset <- function(
   x[, "yof" := data.table::year(x$end_of_followup)]
   x[, "surv_time" := as.numeric(x$end_of_followup - x$date_of_incidence)]
   x[x$autopsy == 1, "surv_time" := 0.0]
-  x[, "agegroup" := cut(x$age_year, seq(0,5*round(max(x$age_year)/5),5),right=FALSE)]
-  levels(x$agegroup)=c(1:21)
-  levels(x$agegroup)=ifelse(levels(x$agegroup) %in% c(19:21),21,levels(x$agegroup))
-  x[, "period" := substr(cut(x$yoi,seq(5*floor(min(x$yoi)/5),
-  5*ceiling(max(x$yoi)/5),5),right=FALSE),2,5)]
-  x[, "excl_surv_age" := ifelse (x$age_year<90,0L,1L)]
+  age_breaks <- c(seq(0.0, 90.0, 5.0), Inf)
+  x[, "agegroup" := cut(x$age, age_breaks, right = FALSE, labels = FALSE)]
+  x[agegroup == 19L, "agegroup" := 21L]
+  period_levels <- nordcancore::nordcan_metadata_column_level_space_list(
+    "period"
+  )
+  year_breaks <- as.integer(c(period_levels, max(period_levels) + 5L))
+  x[, "period" := cut(yoi, year_breaks, right = FALSE, labels = FALSE)]
+  x[, "period" := period_levels[x$period]]
+  x[, "excl_surv_age" := ifelse (x$age<90,0L,1L)]
   x[, "excl_surv_dco" := ifelse (x$bod==0,1L,0L)]
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,1L,0L)]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
@@ -85,7 +89,7 @@ enrich_nordcan_cancer_case_dataset <- function(
     on = "tum",
     j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
   ]
-   x[, "excl_imp_icd10conversion" := as.integer(ifelse (is.na(x$excl_imp_error),0,1))]
+   x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
 
     mp <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
@@ -99,7 +103,7 @@ enrich_nordcan_cancer_case_dataset <- function(
     on = "tum",
     j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
   ]
-  x[, "excl_imp_duplicate" := as.integer(ifelse(grepl("\\*",x$excl_imp_duplicate),1,0))]
+  x[, "excl_imp_duplicate" := ifelse(grepl("\\*",x$excl_imp_duplicate),1,0)]
     i.in_multiple_primary_input.exl <- NULL # this only to appease R CMD CHECK
   x[
     i = mp,
