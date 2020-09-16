@@ -107,6 +107,14 @@ enrich_nordcan_cancer_case_dataset <- function(
     j = "excl_imp_benign" := i.in_multiple_primary_input.exl,
   ]
   x[, "excl_imp_benign" := ifelse(x$excl_imp_benign,1L,0L)]
+  
+  i.in_multiple_primary_output.txt <- NULL # this only to appease R CMD CHECK
+  x[
+    i = mp,
+    on = "tum",
+    j = "excluded_multiple" := i.in_multiple_primary_output.txt,
+  ]
+    x[, "excluded_multiple" := ifelse(x$excluded_multiple==FALSE,1L,0L)]
 
   icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
   entity_col_nms <- nordcancore::nordcan_metadata_column_name_set("column_name_set_entity")
