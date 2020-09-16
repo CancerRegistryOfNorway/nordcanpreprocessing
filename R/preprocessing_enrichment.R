@@ -66,7 +66,7 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[agegroup == 19L, "agegroup" := 21L]
   period_levels <- nordcancore::nordcan_metadata_column_level_space_list(
     "period"
-  )
+  )[["period"]]
   year_breaks <- as.integer(c(period_levels, max(period_levels) + 5L))
   x[, "period" := cut(yoi, year_breaks, right = FALSE, labels = FALSE)]
   x[, "period" := period_levels[x$period]]
