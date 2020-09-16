@@ -23,12 +23,12 @@ name of tool in IARC CRG Tools to use; one of the output of
 \item{iarccrgtools_exe_path}{\verb{[character]} (mandatory, no default)
 
 path to executable of IARC CRG Tools; passed to
-\link[iarccrgtools:exe_path]{iarccrgtools::set_tools_exe_path}}
+\link[iarccrgtools:set_tools_exe_path]{iarccrgtools::set_tools_exe_path}}
 
 \item{iarccrgtools_work_dir}{\verb{[character]} (mandatory, no default)
 
 path to a directory where inputs and outputs to IARC CRG Tools will be
-stored; passed to \code{\link[iarccrgtools:work_dir]{iarccrgtools::set_tools_work_dir()}}}
+stored; passed to \code{\link[iarccrgtools:set_tools_work_dir]{iarccrgtools::set_tools_work_dir()}}}
 }
 \description{
 Pass NORDCAN cancer record dataset to IARC CRG Tools from R.

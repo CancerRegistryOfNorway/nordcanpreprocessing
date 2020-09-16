@@ -37,12 +37,17 @@
 
 
 #' @importFrom data.table setDT copy := month year .SD
-enrich_nordcan_cancer_case_dataset <- function(
+enrich_nordcan_cancer_record_dataset <- function(
   x,
   iarccrgtools_exe_path,
   iarccrgtools_work_dir
   ) {
-  dbc::assert_is_data.frame(x)
+  dbc::assert_is_data.frame_with_required_names(
+    x,
+    required_names = nordcancore::nordcan_metadata_column_name_set(
+      "column_name_set_unprocessed_cancer_record_dataset"
+    )
+  )
 
   #takes a copy so the original object is not affected
   x <- data.table::setDT(data.table::copy(x))

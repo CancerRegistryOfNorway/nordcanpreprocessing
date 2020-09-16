@@ -69,7 +69,7 @@ nordcan_processed_cancer_record_dataset <- function(
           "creating new columns...")
   gs <- nordcancore::get_global_nordcan_settings()
   iarc_wd <- gs[["iarccrgtools_work_dir"]]
-  x <- enrich_nordcan_cancer_case_dataset(
+  x <- enrich_nordcan_cancer_record_dataset(
     x = x_work,
     iarccrgtools_exe_path = iarccrgtools_exe_path,
     iarccrgtools_work_dir = iarc_wd
