@@ -197,7 +197,14 @@ iarccrgtools_dataset <- function(
     iarc_col_nm <- iarc_col_nms[j]
     tgt_class <- class(template[[iarc_col_nm]])[1L]
     conversion_fun <- match.fun(paste0("as.", tgt_class))
-    conversion_fun(x[[nc_col_nm]])
+    values <- conversion_fun(x[[nc_col_nm]])
+    if (is.character(values)&&all(grepl("^[0-9]+$", template[[iarc_col_nm]]))) {
+      # numbers as strings, such as topo and morpho
+      n_digits <- nchar(template[[iarc_col_nm]][1L])
+      values <- gsub("[^0-9]", "", values)
+      values <- formatC(values, digits = n_digits, flag = "0")
+    }
+    return(values)
   }))
   data.table::setnames(iarc_data, names(iarc_data), iarc_col_nms)
   return(iarc_data[])
@@ -235,7 +242,7 @@ iarccrgtools_tool <- function(
     data = x,
     tool.name = tool_name,
     clean = FALSE,
-    verbose = TRUE
+    verbose = FALSE
   )
 
   iarc_dt <- iarccrgtools::connect_tool_results_to_observations(

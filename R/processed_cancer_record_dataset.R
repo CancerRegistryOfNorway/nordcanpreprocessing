@@ -64,6 +64,7 @@ nordcan_processed_cancer_record_dataset <- function(
     x_work <- data.table::copy(x_work)
     return(x_work)
   }
+  x_work[, "problem" := NULL]
 
   message("* nordcanpreprocessing::nordcan_processed_cancer_record_dataset: ",
           "creating new columns...")
