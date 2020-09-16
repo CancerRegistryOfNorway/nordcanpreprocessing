@@ -24,6 +24,8 @@ nordcan_processed_cancer_record_dataset <- function(
   )
   dbc::assert_user_input_file_exists(iarccrgtools_exe_path)
 
+  message("* nordcanpreprocessing::nordcan_processed_cancer_record_dataset: ",
+          "validating input dataset...")
   report_df <- report_dataset_is_valid(
     x = x,
     dataset_name = "unprocessed_cancer_record_dataset"
@@ -31,21 +33,28 @@ nordcan_processed_cancer_record_dataset <- function(
   x_work <- data.table::setDT(mget(x_work_col_nms, as.environment(x)))
   data.table::setnames(x_work, names(x_work), x_work_col_nms)
   x_work[, "problem" := NA_character_]
+
   lapply(1:nrow(report_df), function(test_no) {
     wh_fail <- report_df[["wh_fail"]][[test_no]]
     if (length(wh_fail) > 0L && !(length(wh_fail) == 1L && is.na(wh_fail))) {
+      new_values <- data.table::fifelse(
+        is.na(x_work[["problem"]][wh_fail]),
+        report_df[["message"]][test_no],
+        paste0(
+          x_work[["problem"]][wh_fail], "; ", report_df[["message"]][test_no]
+        )
+      )
+
       data.table::set(
         x_work,
         i = wh_fail,
         j = "problem",
-        value = paste0(
-          x_work[["problem"]], "; ", report_df[["message"]][test_no]
-        )
+        value = new_values
       )
     }
   })
 
-  n_problematic <- sum(is.na(x_work[["problem"]]))
+  n_problematic <- sum(!is.na(x_work[["problem"]]))
   if (n_problematic > 0L) {
     message("* nordcanpreprocessing::nordcan_processed_cancer_record_dataset: ",
             n_problematic, " observations had problems; returned a copy ",
@@ -56,6 +65,8 @@ nordcan_processed_cancer_record_dataset <- function(
     return(x_work)
   }
 
+  message("* nordcanpreprocessing::nordcan_processed_cancer_record_dataset: ",
+          "creating new columns...")
   gs <- nordcancore::get_global_nordcan_settings()
   iarc_wd <- gs[["iarccrgtools_work_dir"]]
   x <- enrich_nordcan_cancer_case_dataset(
@@ -64,6 +75,8 @@ nordcan_processed_cancer_record_dataset <- function(
     iarccrgtools_work_dir = iarc_wd
   )
 
+  message("* nordcanpreprocessing::nordcan_processed_cancer_record_dataset: ",
+          "finished.")
   return(x[])
 }
 
