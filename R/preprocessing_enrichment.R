@@ -79,7 +79,7 @@ enrich_nordcan_cancer_record_dataset <- function(
     "period"
   )[["period"]]
   year_breaks <- as.integer(c(period_levels, max(period_levels) + 5L))
-  x[, "period" := cut(yoi, year_breaks, right = FALSE, labels = FALSE)]
+  x[, "period" := cut(x$yoi, year_breaks, right = FALSE, labels = FALSE)]
   x[, "period" := period_levels[x$period]]
   x[, "excl_surv_age" := ifelse (x$age<90,0L,1L)]
   x[, "excl_surv_dco" := ifelse (x$bod==0,1L,0L)]
