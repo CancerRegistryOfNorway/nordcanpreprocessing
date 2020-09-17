@@ -78,7 +78,7 @@ enrich_nordcan_cancer_record_dataset <- function(
 
   excl_surv_col_nms <- names(x)[grepl("excl_surv_", names(x))]
   x[
-    j = "excl_imp_total" := as.integer(rowSums(.SD) > 0L),
+    j = "excl_surv_total" := as.integer(rowSums(.SD) > 0L),
     .SDcols = excl_surv_col_nms
   ]
 
