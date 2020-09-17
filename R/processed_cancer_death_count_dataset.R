@@ -20,7 +20,8 @@
 #' )
 #'
 #' cdcd <- nordcan_processed_cancer_death_count_dataset(x = dt)
-#' @importFrom data.table .SD
+#' @importFrom data.table .SD rbindlist setnames
+#' @importFrom nordcancore nordcan_metadata_icd_by_version_to_entity
 #' @export
 nordcan_processed_cancer_death_count_dataset <- function(
   x
@@ -33,8 +34,24 @@ nordcan_processed_cancer_death_count_dataset <- function(
              all.x = TRUE, all.y = FALSE)
 
   col_nms <- nordcancore::nordcan_metadata_column_name_set(
-    "processed_cancer_death_count_dataset"
+    "column_name_set_processed_cancer_death_count_dataset"
   )
+  entity_col_nms <- nordcancore::nordcan_metadata_column_name_set(
+    "column_name_set_entity"
+  )
+  x <- data.table::rbindlist(lapply(entity_col_nms, function(entity_col_nm) {
+    sub_x_col_nms <- union(entity_col_nm, setdiff(col_nms, "entity"))
+    sub_x <- x[j = .SD, .SDcols = sub_x_col_nms]
+    data.table::setnames(sub_x, entity_col_nm, "entity")
+    sub_x[]
+  }))
+  stratum_col_nms <- setdiff(names(x), "death_count")
+  x <- x[
+    j = lapply(.SD, sum),
+    keyby = stratum_col_nms,
+    .SDcols = "death_count"
+  ]
+
   return(x[j = .SD, .SDcols = col_nms][])
 }
 
