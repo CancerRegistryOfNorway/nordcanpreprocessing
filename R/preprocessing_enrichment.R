@@ -76,6 +76,12 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,1L,0L)]
 
+  excl_surv_col_nms <- names(x)[grepl("excl_surv_", names(x))]
+  x[
+    j = "excl_imp_total" := as.integer(rowSums(.SD) > 0L),
+    .SDcols = excl_surv_col_nms
+  ]
+
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
     tool_name = "icdo3_to_icd10",
@@ -94,22 +100,22 @@ enrich_nordcan_cancer_record_dataset <- function(
     on = "tum",
     j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
   ]
-   x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
+  x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
 
-    mp <- nordcanpreprocessing::iarccrgtools_tool(
+  mp <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
     tool_name = "multiple_primary",
     iarccrgtools_exe_path = iarccrgtools_exe_path,
     iarccrgtools_work_dir = iarccrgtools_work_dir
   )
-   i.multiple_primary_input.mul <- NULL # this only to appease R CMD CHECK
+  i.multiple_primary_input.mul <- NULL # this only to appease R CMD CHECK
   x[
     i = mp,
     on = "tum",
     j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
   ]
   x[, "excl_imp_duplicate" := ifelse(grepl("\\*",x$excl_imp_duplicate),1L,0L)]
-    i.in_multiple_primary_input.exl <- NULL # this only to appease R CMD CHECK
+  i.in_multiple_primary_input.exl <- NULL # this only to appease R CMD CHECK
   x[
     i = mp,
     on = "tum",
@@ -123,7 +129,7 @@ enrich_nordcan_cancer_record_dataset <- function(
     on = "tum",
     j = "excluded_multiple" := i.in_multiple_primary_output.txt,
   ]
-    x[, "excluded_multiple" := ifelse(x$excluded_multiple==FALSE,1L,0L)]
+  x[, "excluded_multiple" := ifelse(x$excluded_multiple==FALSE,1L,0L)]
 
   icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
   entity_col_nms <- nordcancore::nordcan_metadata_column_name_set("column_name_set_entity")
@@ -131,9 +137,12 @@ enrich_nordcan_cancer_record_dataset <- function(
 
   x[, "excl_imp_entitymissing" := ifelse (is.na(x$entity_level_30),1L,0L)]
 
-  excl_ind_col_nms <- names(x)[grepl("excl", names(x))]
-  excl_ind_col_nms <- setdiff(excl_ind_col_nms, "excl_imp_error")
-  x[, "excl_imp_total" := as.integer(rowSums(.SD) > 0L), .SDcols = excl_ind_col_nms]
+  excl_imp_col_nms <- names(x)[grepl("^excl_imp_", names(x))]
+  excl_imp_col_nms <- setdiff(excl_imp_col_nms, "excl_imp_error")
+  x[
+    j = "excl_imp_total" := as.integer(rowSums(.SD) > 0L),
+    .SDcols = excl_imp_col_nms
+  ]
 
   return(x[])
 }
