@@ -61,9 +61,20 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[, "yof" := data.table::year(x$end_of_followup)]
   x[, "surv_time" := as.numeric(x$end_of_followup - x$date_of_incidence)]
   x[x$autopsy == 1, "surv_time" := 0.0]
+
   age_breaks <- c(seq(0.0, 90.0, 5.0), Inf)
   x[, "agegroup" := cut(x$age, age_breaks, right = FALSE, labels = FALSE)]
-  x[agegroup == 19L, "agegroup" := 21L]
+  x[x$agegroup == 19L, "agegroup" := 21L]
+  x[, "agr_all_ages" := 1L]
+  agr_bone_breaks <- c(0, 30, 40, 50, 70, 90, Inf)
+  x[, "agr_bone" := cut(x$age, agr_bone_breaks, right = FALSE, labels = FALSE)]
+  agr_all_sites_breaks <- c(0, 30, 50, 70, 80, 90, Inf)
+  x[
+    j = "agr_all_sites" := cut(
+      x$age, agr_all_sites_breaks, right = FALSE, labels = FALSE
+    )
+  ]
+
   period_levels <- nordcancore::nordcan_metadata_column_level_space_list(
     "period"
   )[["period"]]
