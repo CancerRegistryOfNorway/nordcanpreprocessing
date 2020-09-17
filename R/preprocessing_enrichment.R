@@ -115,13 +115,20 @@ enrich_nordcan_cancer_record_dataset <- function(
     j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
   ]
   x[, "excl_imp_duplicate" := ifelse(grepl("\\*",x$excl_imp_duplicate),1L,0L)]
-  i.in_multiple_primary_input.exl <- NULL # this only to appease R CMD CHECK
-  x[
-    i = mp,
-    on = "tum",
-    j = "excl_imp_benign" := i.in_multiple_primary_input.exl,
-  ]
-  x[, "excl_imp_benign" := ifelse(x$excl_imp_benign,1L,0L)]
+
+  # it may be that multiple_primary_input.exl is not created if IARC CRG Tools
+  # found nothing to exclude.
+  if (!"in_multiple_primary_input.exl" %in% names(mp)) {
+    x[, "excl_imp_benign" := rep(0L, nrow(x))]
+  } else {
+    i.in_multiple_primary_input.exl <- NULL # this only to appease R CMD CHECK
+    x[
+      i = mp,
+      on = "tum",
+      j = "excl_imp_benign" := i.in_multiple_primary_input.exl,
+    ]
+    x[, "excl_imp_benign" := ifelse(x$excl_imp_benign,1L,0L)]
+  }
 
   i.in_multiple_primary_output.txt <- NULL # this only to appease R CMD CHECK
   x[
