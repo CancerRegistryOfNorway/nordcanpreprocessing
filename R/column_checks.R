@@ -214,10 +214,6 @@ test_dataset_columns_are_valid <- function(
 #' @export
 report_column_is_valid <- function(x, column_name) {
   dbc::assert_is_character_nonNA_atom(column_name)
-  dbc::assert_atom_is_in_set(
-    column_name,
-    set = names(report_funs_by_column_name)
-  )
   if (!column_name %in% names(report_funs_by_column_name)) {
     stop("Internal error: no report function defined for column_name = ",
          deparse(column_name))
