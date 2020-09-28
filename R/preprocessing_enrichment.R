@@ -3,6 +3,21 @@
 
 
 
+add_nordcan_entity_columns <- function(x) {
+
+  icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
+  entity_col_nms <- nordcancore::nordcan_metadata_column_name_set("column_name_set_entity")
+  x <- merge(x, icd10_to_entity_dt, by = "icd10")
+
+  # TODO: add exceptions based on stata code here
+
+  return(x[])
+}
+
+
+
+
+
 #' @title NORDCAN Cancer Case Dataset
 #' @description
 #' Add new necessary columns to the cancer case dataset for use in computing
@@ -149,9 +164,7 @@ enrich_nordcan_cancer_record_dataset <- function(
   ]
   x[, "excluded_multiple" := ifelse(x$excluded_multiple==FALSE,1L,0L)]
 
-  icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
-  entity_col_nms <- nordcancore::nordcan_metadata_column_name_set("column_name_set_entity")
-  x <- merge(x, icd10_to_entity_dt, by = "icd10")
+  x <- add_nordcan_entity_columns(x)
 
   x[, "excl_imp_entitymissing" := ifelse (is.na(x$entity_level_30),1L,0L)]
 
