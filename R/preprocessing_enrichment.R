@@ -1,15 +1,33 @@
 
-
-
-
-
 add_nordcan_entity_columns <- function(x) {
 
   icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
   entity_col_nms <- nordcancore::nordcan_metadata_column_name_set("column_name_set_entity")
   x <- merge(x, icd10_to_entity_dt, by = "icd10")
+  
+  ####for most conversions (change entity for basal cell carcinomas, set entity for meningeomas (316), set entity for gliomas (317))
+dt11=do.call(expand.grid, list(morpho = seq(8090,8094), beh = 3, entity_level_30 = 888))
+dt12=do.call(expand.grid, list(morpho = seq(9530,9539), beh = seq(0,3), entity_level_30 = 316))
+dt13=do.call(expand.grid, list(morpho = seq(9380,9411), beh = seq(1,3), entity_level_30 = 317))
+dt14=do.call(expand.grid, list(morpho = seq(9414,9460), beh = seq(1,3), entity_level_30 = 317))
+dt15=do.call(expand.grid, list(morpho = 9390, beh = 0, entity_level_30 = 317))
+dt1=do.call(rbind, lapply(paste0("dt", 11:15), get))
 
-  # TODO: add exceptions based on stata code here
+####for limit included bladder/urinary tumors to 8010/2, 8120/1, 8120/2, 8130/1, 8130/2
+dt2=do.call(expand.grid, list(morpho = setdiff(unique(unprocessed_cancer_record_dataset$morpho),c(8010, 8120, 8130)), beh = seq(0,2), entity_level_30 = 280, new_entity_level_30=999))
+
+  ####exceptions based on stata code here
+   x[
+ i = dt1,
+ on = c("morpho", "beh"),
+ j = "entity_level_30" := i.entity_level_30
+ ]
+
+ x[
+ i = dt2,
+ on = c("morpho", "beh"),
+ j = "entity_level_30" := i.new_entity_level_30
+ ]
 
   return(x[])
 }
