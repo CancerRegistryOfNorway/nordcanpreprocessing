@@ -11,6 +11,7 @@
 #'
 #' passed to [iarccrgtools_tool]
 #' @export
+#' @importFrom data.table :=
 nordcan_processed_cancer_record_dataset <- function(
   x,
   iarccrgtools_exe_path

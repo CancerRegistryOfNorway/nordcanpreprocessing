@@ -1,5 +1,5 @@
 
-#' @importFrom utils sessionInfo
+
 report_to_log <- function(
   x,
   report_df,

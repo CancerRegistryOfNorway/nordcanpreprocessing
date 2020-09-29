@@ -18,8 +18,6 @@
 #' @section New columns:
 #' See https://github.com/CancerRegistryOfNorway/NORDCAN/wiki/Module-PreprocessEnrich
 #'
-#' @importFrom data.table setDT copy month year
-#' @importFrom dbc assert_is_data.frame
 #' @export
 
 ###enrichment" part of our preprocessing.
@@ -36,7 +34,7 @@
 # "excl_surv_autopsy","excl_surv_negativefou","excl_surv_zerofou","excl_imp_error"))]
 
 
-#' @importFrom data.table setDT copy := month year .SD
+#' @importFrom data.table := .SD
 enrich_nordcan_cancer_record_dataset <- function(
   x,
   iarccrgtools_exe_path,
@@ -169,9 +167,6 @@ enrich_nordcan_cancer_record_dataset <- function(
 #' @description
 #' Pass NORDCAN cancer record dataset to IARC CRG Tools from R.
 
-#' @importFrom iarccrgtools create_example
-#' @importFrom nordcancore nordcan_metadata_column_name_set_names nordcan_metadata_column_name_set
-#' @importFrom data.table setDT setnames
 #' @export
 #' @param x `[data.table]` (mandatory, no default)
 #'
@@ -184,10 +179,6 @@ enrich_nordcan_cancer_record_dataset <- function(
 
 
 #' @rdname iarccrgtools
-#' @importFrom iarccrgtools create_example
-#' @importFrom nordcancore nordcan_iarccrgtools_tool_names
-#' nordcan_metadata_column_name_set
-#' @importFrom data.table setDT setnames
 #' @details
 #' - `iarccrgtools_dataset` collects a dataset from `x` that corresponds to the
 #'   requirements of the appropriate tool given in `tool_name`;
@@ -247,9 +238,6 @@ iarccrgtools_dataset <- function(
 #'
 #' path to a directory where inputs and outputs to IARC CRG Tools will be
 #' stored; passed to [iarccrgtools::set_tools_work_dir()]
-#' @importFrom iarccrgtools set_tools_exe_path set_tools_work_dir
-#' interact_with_tool connect_tool_results_to_observations
-#' @importFrom data.table setkeyv
 #' @details
 #' - `iarccrgtools_tool` runs first `[iarccrgtools::interact_with_tool]` and
 #'   then `[iarccrgtools::connect_tool_results_to_observations]`; see those

@@ -20,8 +20,7 @@
 #' )
 #'
 #' cdcd <- nordcan_processed_cancer_death_count_dataset(x = dt)
-#' @importFrom data.table .SD rbindlist setnames
-#' @importFrom nordcancore nordcan_metadata_icd_by_version_to_entity
+#' @importFrom data.table .SD
 #' @export
 nordcan_processed_cancer_death_count_dataset <- function(
   x

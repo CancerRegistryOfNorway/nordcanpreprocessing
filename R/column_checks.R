@@ -25,7 +25,6 @@
 #' `nordcancore::nordcan_metadata_dataset_names()`; therefore see also
 #' `[nordcancore::nordcan_metadata_dataset_names]`
 #' @export
-#' @importFrom dbc assert_is_character_nonNA_atom assert_atom_is_in_set
 report_dataset_is_valid <- function(
   x,
   dataset_name
@@ -44,7 +43,6 @@ report_dataset_is_valid <- function(
 
 #' @rdname reports_assertions_tests
 #' @export
-#' @importFrom dbc report_to_assertion
 assert_dataset_is_valid <- function(
   x,
   dataset_name
@@ -57,7 +55,6 @@ assert_dataset_is_valid <- function(
 
 #' @rdname reports_assertions_tests
 #' @export
-#' @importFrom dbc report_to_assertion
 assert_processed_cancer_record_dataset_is_valid <- function(
   x
 ) {
@@ -68,7 +65,6 @@ assert_processed_cancer_record_dataset_is_valid <- function(
 }
 #' @rdname reports_assertions_tests
 #' @export
-#' @importFrom dbc report_to_assertion
 assert_unprocessed_cancer_record_dataset_is_valid <- function(
   x
 ) {
@@ -79,7 +75,6 @@ assert_unprocessed_cancer_record_dataset_is_valid <- function(
 }
 #' @rdname reports_assertions_tests
 #' @export
-#' @importFrom dbc report_to_assertion
 assert_general_population_size_dataset_is_valid <- function(
   x
 ) {
@@ -90,7 +85,6 @@ assert_general_population_size_dataset_is_valid <- function(
 }
 #' @rdname reports_assertions_tests
 #' @export
-#' @importFrom dbc report_to_assertion
 assert_general_population_death_count_dataset_is_valid <- function(
   x
 ) {
@@ -101,7 +95,6 @@ assert_general_population_death_count_dataset_is_valid <- function(
 }
 #' @rdname reports_assertions_tests
 #' @export
-#' @importFrom dbc report_to_assertion
 assert_national_population_life_table_is_valid <- function(
   x
 ) {
@@ -129,10 +122,6 @@ test_dataset_is_valid <- function(
 #'
 #' names of columns to check
 #' @export
-#' @importFrom data.table rbindlist
-#' @importFrom dbc assert_is_character_nonNA_vector
-#' report_is_data.frame_with_required_names tests_to_report
-#' @importFrom nordcancore get_internal_dataset
 report_dataset_columns_are_valid <- function(
   x,
   column_names
@@ -182,7 +171,6 @@ report_dataset_columns_are_valid <- function(
 
 #' @rdname reports_assertions_tests
 #' @export
-#' @importFrom dbc report_to_assertion
 assert_dataset_columns_are_valid <- function(
   x,
   column_names
@@ -224,7 +212,6 @@ report_column_is_valid <- function(x, column_name) {
 
 #' @rdname reports_assertions_tests
 #' @export
-#' @importFrom dbc report_to_assertion
 assert_column_is_valid <- function(x, column_name) {
   report_df <- report_column_is_valid(x = x, column_name = column_name)
   dbc::report_to_assertion(report_df)
