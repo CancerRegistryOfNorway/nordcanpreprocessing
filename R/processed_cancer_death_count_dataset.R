@@ -16,7 +16,7 @@
 #'   agegroup = 1L,
 #'   icd_code = "1751",
 #'   icd_version = 7L,
-#'   death_count = 10L
+#'   cancer_death_count = 10L
 #' )
 #'
 #' cdcd <- nordcan_processed_cancer_death_count_dataset(x = dt)
@@ -44,11 +44,11 @@ nordcan_processed_cancer_death_count_dataset <- function(
     data.table::setnames(sub_x, entity_col_nm, "entity")
     sub_x[]
   }))
-  stratum_col_nms <- setdiff(names(x), "death_count")
+  stratum_col_nms <- setdiff(names(x), "cancer_death_count")
   x <- x[
     j = lapply(.SD, sum),
     keyby = stratum_col_nms,
-    .SDcols = "death_count"
+    .SDcols = "cancer_death_count"
   ]
 
   return(x[j = .SD, .SDcols = col_nms][])
