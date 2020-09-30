@@ -4,7 +4,7 @@ add_nordcan_entity_columns <- function(x) {
   icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
   entity_col_nms <- nordcancore::nordcan_metadata_column_name_set("column_name_set_entity")
   x <- merge(x, icd10_to_entity_dt, by = "icd10")
-  
+
   ####for most conversions (change entity for basal cell carcinomas, set entity for meningeomas (316), set entity for gliomas (317))
 dt11 <- do.call(
   expand.grid, list(morpho = seq(8090,8094), beh = 3, entity_level_30 = 888)
@@ -26,9 +26,9 @@ dt1 <- do.call(rbind, lapply(paste0("dt", 11:15), get))
 ####for limit included bladder/urinary tumors to 8010/2, 8120/1, 8120/2, 8130/1, 8130/2
 dt2=do.call(
   expand.grid, list(
-    morpho = setdiff(unique(x$morpho),c(8010, 8120, 8130)), 
-    beh = seq(0,2), 
-    entity_level_30 = 280, 
+    morpho = setdiff(unique(x$morpho),c(8010, 8120, 8130)),
+    beh = seq(0,2),
+    entity_level_30 = 280,
     new_entity_level_30=999)
            )
 
@@ -272,6 +272,11 @@ iarccrgtools_dataset <- function(
     return(values)
   }))
   data.table::setnames(iarc_data, names(iarc_data), iarc_col_nms)
+
+  message("* nordcanpreprocessing::iarccrgtools_dataset: collected columns ",
+          deparse(nc_col_nms), " to pass as columns ",
+          deparse(iarc_col_nms), " for using iarccrgtools")
+
   return(iarc_data[])
 }
 
@@ -300,6 +305,17 @@ iarccrgtools_tool <- function(
 
   iarccrgtools::set_tools_exe_path(iarccrgtools_exe_path)
   iarccrgtools::set_tools_work_dir(iarccrgtools_work_dir)
+
+  message("* nordcanpreprocessing::iarccrgtools_tool: calling ",
+          "iarccrgtools::interact_with_tool with tool.name = ",
+          deparse(tool_name))
+  if (grepl("multiple_primary", tool_name)) {
+    "include /1 and /2 in bladder, include /0 and /1 for brain"
+    message("* nordcanpreprocessing::iarccrgtools_tool: for the ",
+            "multiple_primary tool, please check the ",
+            "\"Includes /1 and /2 in bladder\" and ",
+            "\"Includes /1 and /2 for brain\" boxes")
+  }
   iarc_results <- iarccrgtools::interact_with_tool(
     data = x,
     tool.name = tool_name,
