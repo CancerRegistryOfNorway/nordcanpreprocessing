@@ -273,9 +273,9 @@ iarccrgtools_dataset <- function(
   }))
   data.table::setnames(iarc_data, names(iarc_data), iarc_col_nms)
 
-  message("* nordcanpreprocessing::iarccrgtools_dataset: collected columns ",
-          deparse(nc_col_nms), " to pass as columns ",
-          deparse(iarc_col_nms), " for using iarccrgtools")
+  message("* nordcanpreprocessing::iarccrgtools_dataset: collected columns\n",
+          "  ", deparse(nc_col_nms), "\n  to pass as columns\n",
+          "  ", deparse(iarc_col_nms), "\n  for using iarccrgtools")
 
   return(iarc_data[])
 }
@@ -310,11 +310,11 @@ iarccrgtools_tool <- function(
           "iarccrgtools::interact_with_tool with tool.name = ",
           deparse(tool_name))
   if (grepl("multiple_primary", tool_name)) {
-    "include /1 and /2 in bladder, include /0 and /1 for brain"
     message("* nordcanpreprocessing::iarccrgtools_tool: for the ",
-            "multiple_primary tool, please check the ",
-            "\"Includes /1 and /2 in bladder\" and ",
-            "\"Includes /1 and /2 for brain\" boxes")
+            "multiple_primary tool, please check all of the following boxes:\n",
+            "  - \"Includes unspecified (/1) or in situ (/2) tumours of the bladder\"\n",
+            "  - \"Includes benign (/0) and unspecified (/1) tumours of the brain\"\n",
+            "  - \"Write duplicate records into a separate file\"\n")
   }
   iarc_results <- iarccrgtools::interact_with_tool(
     data = x,
