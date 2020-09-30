@@ -21,7 +21,8 @@ dt14 <- do.call(
 dt15 <- do.call(
   expand.grid, list(morpho = 9390, beh = 0, entity_level_30 = 317)
             )
-dt1 <- do.call(rbind, lapply(paste0("dt", 11:15), get))
+
+dt1 <- do.call(rbind, mget(paste0("dt", 11:15)))
 
 ####for limit included bladder/urinary tumors to 8010/2, 8120/1, 8120/2, 8130/1, 8130/2
 dt2=do.call(
