@@ -1,7 +1,7 @@
 Package: nordcanpreprocessing
 Type: Package
 Title: NORDCAN Dataset Preprocessing
-Version: 0.4.0.4
+Version: 0.4.0.5
 Authors@R: c(
   person("Huidong", "Tian", email = "huidong.tian@kreftregisteret.no", role = c("aut", "cre")), 
   person("Joonas", "Miettinen", email = "joonas.miettinen@cancer.fi", role = "aut")

@@ -150,6 +150,7 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,1L,0L)]
   x[, "excl_surv_year" := ifelse(x$period %in% period_levels, 0L,1L)]
+  x[, "excl_surv_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
 
   excl_surv_col_nms <- names(x)[grepl("excl_surv_", names(x))]
   x[
@@ -215,7 +216,7 @@ enrich_nordcan_cancer_record_dataset <- function(
 
   x <- add_nordcan_entity_columns(x)
 
-  x[, "excl_imp_entitymissing" := ifelse (is.na(x$entity_level_30),1L,0L)]
+  x[, "excl_imp_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
 
   x[, "excl_imp_year" := ifelse(x$period %in% period_levels, 0L, 1L)]
 
