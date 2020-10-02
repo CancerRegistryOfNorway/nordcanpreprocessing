@@ -144,19 +144,6 @@ enrich_nordcan_cancer_record_dataset <- function(
   year_breaks <- as.integer(c(period_levels, max(period_levels) + 5L))
   x[, "period" := cut(x$yoi, year_breaks, right = FALSE, labels = FALSE)]
   x[, "period" := period_levels[x$period]]
-  x[, "excl_surv_age" := ifelse (x$age<90,0L,1L)]
-  x[, "excl_surv_dco" := ifelse (x$bod==0,1L,0L)]
-  x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,1L,0L)]
-  x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
-  x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,1L,0L)]
-  x[, "excl_surv_year" := ifelse(x$period %in% period_levels, 0L,1L)]
-  x[, "excl_surv_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
-
-  excl_surv_col_nms <- names(x)[grepl("excl_surv_", names(x))]
-  x[
-    j = "excl_surv_total" := as.integer(rowSums(.SD) > 0L),
-    .SDcols = excl_surv_col_nms
-  ]
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
@@ -217,7 +204,6 @@ enrich_nordcan_cancer_record_dataset <- function(
   x <- add_nordcan_entity_columns(x)
 
   x[, "excl_imp_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
-
   x[, "excl_imp_year" := ifelse(x$period %in% period_levels, 0L, 1L)]
 
   excl_imp_col_nms <- names(x)[grepl("^excl_imp_", names(x))]
@@ -225,6 +211,20 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[
     j = "excl_imp_total" := as.integer(rowSums(.SD) > 0L),
     .SDcols = excl_imp_col_nms
+  ]
+
+  x[, "excl_surv_age" := ifelse (x$age<90,0L,1L)]
+  x[, "excl_surv_dco" := ifelse (x$bod==0,1L,0L)]
+  x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,1L,0L)]
+  x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
+  x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,1L,0L)]
+  x[, "excl_surv_year" := ifelse(x$period %in% period_levels, 0L,1L)]
+  x[, "excl_surv_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
+
+  excl_surv_col_nms <- names(x)[grepl("excl_surv_", names(x))]
+  x[
+    j = "excl_surv_total" := as.integer(rowSums(.SD) > 0L),
+    .SDcols = excl_surv_col_nms
   ]
 
   return(x[])
