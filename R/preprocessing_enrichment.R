@@ -157,6 +157,10 @@ enrich_nordcan_cancer_record_dataset <- function(
     on = "tum",
     j = "icd10" := i.icdo3_to_icd10_output.txt,
   ]
+  
+  if (!"icdo3_to_icd10_input.eO3to10" %in% names(icd10_dt)) {
+    x[, "excl_imp_error" := rep(0L, nrow(x))]
+  } else {
   i.icdo3_to_icd10_input.eO3to10 <- NULL # this only to appease R CMD CHECK
   x[
     i = icd10_dt,
@@ -164,6 +168,7 @@ enrich_nordcan_cancer_record_dataset <- function(
     j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
   ]
   x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
+  }
 
   mp <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
@@ -171,6 +176,10 @@ enrich_nordcan_cancer_record_dataset <- function(
     iarccrgtools_exe_path = iarccrgtools_exe_path,
     iarccrgtools_work_dir = iarccrgtools_work_dir
   )
+  
+   if (!"multiple_primary_input.mul" %in% names(mp)) {
+    x[, "excl_imp_duplicate" := rep(0L, nrow(x))]
+  } else {
   i.multiple_primary_input.mul <- NULL # this only to appease R CMD CHECK
   x[
     i = mp,
@@ -178,6 +187,7 @@ enrich_nordcan_cancer_record_dataset <- function(
     j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
   ]
   x[, "excl_imp_duplicate" := ifelse(grepl("\\*",x$excl_imp_duplicate),1L,0L)]
+     }
 
   # it may be that multiple_primary_input.exl is not created if IARC CRG Tools
   # found nothing to exclude.
