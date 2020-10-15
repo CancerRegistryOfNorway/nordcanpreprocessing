@@ -159,15 +159,15 @@ enrich_nordcan_cancer_record_dataset <- function(
   ]
   
   if (!"icdo3_to_icd10_input.eO3to10" %in% names(icd10_dt)) {
-    x[, "excl_imp_error" := rep(0L, nrow(x))]
+    x[, "excl_imp_error" := rep(NA_character_, nrow(x))]
   } else {
-  i.icdo3_to_icd10_input.eO3to10 <- NULL # this only to appease R CMD CHECK
-  x[
-    i = icd10_dt,
-    on = "tum",
-    j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
-  ]
-  x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
+    i.icdo3_to_icd10_input.eO3to10 <- NULL # this only to appease R CMD CHECK
+    x[
+      i = icd10_dt,
+      on = "tum",
+      j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
+    ]
+    x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
   }
 
   mp <- nordcanpreprocessing::iarccrgtools_tool(
