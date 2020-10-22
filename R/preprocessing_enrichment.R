@@ -214,7 +214,14 @@ enrich_nordcan_cancer_record_dataset <- function(
   x <- add_nordcan_entity_columns(x)
 
   x[, "excl_imp_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
-  x[, "excl_imp_year" := ifelse(x$period %in% period_levels, 0L, 1L)]
+  gs <- nordcancore::get_global_nordcan_settings()
+  first_yoi <- gs[["stat_cancer_record_count_first_year"]]
+  last_yoi <- nordcancore::nordcan_metadata_nordcan_year()
+  x[
+    j = "excl_imp_year" := as.integer(
+      !data.table::between(x$yoi, first_yoi, last_yoi, incbounds = TRUE)
+    )
+  ]
 
   excl_imp_col_nms <- names(x)[grepl("^excl_imp_", names(x))]
   excl_imp_col_nms <- setdiff(excl_imp_col_nms, "excl_imp_error")
