@@ -157,7 +157,7 @@ enrich_nordcan_cancer_record_dataset <- function(
     on = "tum",
     j = "icd10" := i.icdo3_to_icd10_output.txt,
   ]
-  
+
   if (!"icdo3_to_icd10_input.eO3to10" %in% names(icd10_dt)) {
     x[, "excl_imp_error" := rep(NA_character_, nrow(x))]
   } else {
@@ -176,7 +176,7 @@ enrich_nordcan_cancer_record_dataset <- function(
     iarccrgtools_exe_path = iarccrgtools_exe_path,
     iarccrgtools_work_dir = iarccrgtools_work_dir
   )
-  
+
    if (!"multiple_primary_input.mul" %in% names(mp)) {
     x[, "excl_imp_duplicate" := rep(0L, nrow(x))]
   } else {
@@ -230,6 +230,7 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,1L,0L)]
   x[, "excl_surv_year" := ifelse(x$period %in% period_levels, 0L,1L)]
   x[, "excl_surv_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
+  x[, "excl_surv_vit_sta" := as.integer(x$vit_sta == 9L)]
 
   excl_surv_col_nms <- names(x)[grepl("excl_surv_", names(x))]
   x[
