@@ -23,7 +23,7 @@ dt <- data.table::data.table(
   agegroup = 1L,
   icd_code = "1751",
   icd_version = 7L,
-  death_count = 10L
+  cancer_death_count = 10L
 )
 
 cdcd <- nordcan_processed_cancer_death_count_dataset(x = dt)
