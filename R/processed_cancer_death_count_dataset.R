@@ -44,12 +44,39 @@ nordcan_processed_cancer_death_count_dataset <- function(
     data.table::setnames(sub_x, entity_col_nm, "entity")
     sub_x[]
   }))
-  stratum_col_nms <- setdiff(names(x), "cancer_death_count")
-  x <- x[
+
+  if(length(unique(x$region)) == 1){
+    stratum_col_nms <- setdiff(names(x), "cancer_death_count")
+    y <- x[
+      j = lapply(.SD, sum),
+      keyby = stratum_col_nms,
+      .SDcols = "cancer_death_count"
+      ]
+  }
+  else {
+  stratum_col_nms_1 <- setdiff(names(x), "cancer_death_count")
+  x1 <- x[
     j = lapply(.SD, sum),
-    keyby = stratum_col_nms,
+    keyby = stratum_col_nms_1,
     .SDcols = "cancer_death_count"
   ]
 
-  return(x[j = .SD, .SDcols = col_nms][])
+  stratum_col_nms_2 <- setdiff(names(x), c("region", "cancer_death_count"))
+  x2 <- x1[
+    j = lapply(.SD, sum),
+    keyby = stratum_col_nms_2,
+    .SDcols = "cancer_death_count"
+    ]
+
+  region_0 <- unique(x1$region[grepl('0$', x1$region)])
+
+  x1 <- x1[!grepl('0$', x1$region), ]
+
+  y <- rbind(x1, x2, fill = TRUE)
+  y$region[is.na(y$region)] <- region_0
+  data.table::setorderv(y, c("sex", "region", "agegroup", "entity", "year"))
+
+  }
+
+  return(y[j = .SD, .SDcols = col_nms][])
 }
