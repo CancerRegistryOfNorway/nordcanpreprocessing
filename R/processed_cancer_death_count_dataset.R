@@ -53,7 +53,3 @@ nordcan_processed_cancer_death_count_dataset <- function(
 
   return(x[j = .SD, .SDcols = col_nms][])
 }
-
-mean <- function(x){
- s <- sum(x)/length(x)
-}
