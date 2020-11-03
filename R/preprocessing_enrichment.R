@@ -138,12 +138,12 @@ enrich_nordcan_cancer_record_dataset <- function(
     )
   ]
 
-  period_levels <- nordcancore::nordcan_metadata_column_level_space_list(
-    "period"
-  )[["period"]]
+  period_5_levels <- nordcancore::nordcan_metadata_column_level_space_list(
+    "period_5"
+  )[["period_5"]]
   year_breaks <- as.integer(c(period_levels, max(period_levels) + 5L))
-  x[, "period" := cut(x$yoi, year_breaks, right = FALSE, labels = FALSE)]
-  x[, "period" := period_levels[x$period]]
+  x[, "period_5" := cut(x$yoi, year_breaks, right = FALSE, labels = FALSE)]
+  x[, "period_5" := period_5_levels[x$period_5]]
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
@@ -235,7 +235,7 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,1L,0L)]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,1L,0L)]
-  x[, "excl_surv_year" := ifelse(x$period %in% period_levels, 0L,1L)]
+  x[, "excl_surv_year" := ifelse(x$period_5 %in% period_5_levels, 0L,1L)]
   x[, "excl_surv_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
   x[, "excl_surv_vit_sta" := as.integer(x$vit_sta == 9L)]
 
