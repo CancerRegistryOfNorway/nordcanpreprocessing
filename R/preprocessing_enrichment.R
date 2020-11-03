@@ -141,7 +141,7 @@ enrich_nordcan_cancer_record_dataset <- function(
   period_5_levels <- nordcancore::nordcan_metadata_column_level_space_list(
     "period_5"
   )[["period_5"]]
-  year_breaks <- as.integer(c(period_levels, max(period_levels) + 5L))
+  year_breaks <- as.integer(c(period_5_levels, max(period_5_levels) + 5L))
   x[, "period_5" := cut(x$yoi, year_breaks, right = FALSE, labels = FALSE)]
   x[, "period_5" := period_5_levels[x$period_5]]
 
