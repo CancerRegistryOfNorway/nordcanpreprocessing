@@ -61,6 +61,14 @@ add_nordcan_entity_columns <- function(x) {
     j = "entity_level_30" := i.new_entity_level_30
   ]
 
+  entity_col_nms <- nordcancore::nordcan_metadata_column_name_set(
+    "column_name_set_entity"
+  )
+  x[
+    i = x[["entity_level_30"]] %in% c(888L, 999L),
+    j = (setdiff(entity_col_nms, "entity_level_30")) := NA_integer_
+  ]
+
   return(x[])
 }
 
