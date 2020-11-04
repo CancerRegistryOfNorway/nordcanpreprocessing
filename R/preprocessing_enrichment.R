@@ -20,7 +20,7 @@ add_nordcan_entity_columns <- function(x) {
   ####for most conversions (change entity for basal cell carcinomas, set entity
   # for meningeomas (316), set entity for gliomas (317))
   dt11 <- do.call(
-    expand.grid, list(morpho = seq(8090,8094), beh = 3, entity_level_30 = 888)
+    expand.grid, list(morpho = c(8090:8094, 8097L), beh = 3, entity_level_30 = 888)
   )
   dt12 <- do.call(
     expand.grid, list(morpho = seq(9530,9539), beh = seq(0,3), entity_level_30 = 316)
