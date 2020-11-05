@@ -95,73 +95,6 @@ assert_general_population_death_count_dataset_is_valid <- function(
 }
 
 
-report_national_population_life_table_is_valid <- function(
-  x
-) {
-  ## First year of survival and lifetable;
-  first_year_survival <- nordcancore::get_global_nordcan_settings()$stat_survival_follow_up_first_year
-  first_year_lifetable <- range(x$year)[1]
-  report_df <- dbc::tests_to_report(
-    tests = c("first_year_survival == first_year_lifetable"),
-    fail_messages = c(sprintf("The first year for survival analysis (%s) & the beginning year of lifetable (%s) must be the same!",
-                              first_year_survival, first_year_lifetable) ),
-    pass_messages = c("The first year of survival & the first year of lifetable are same!")
-  )
-  ## value of 'year '
-  year_nordcan <- nordcancore::nordcan_metadata_nordcan_year()
-  report_df <- rbind(
-    report_df,
-    dbc::tests_to_report(
-      tests = c("all(first_year_survival:year_nordcan %in% unique(x$year))"),
-      fail_messages = c(sprintf("Column 'year' should have every year between the first survival year (%s) and the current NORDCAN year (%s).",
-                                first_year_survival, year_nordcan)),
-      pass_messages = c("Column 'year' should have every year between the first survival year and the current NORDCAN year!")
-    )
-  )
-  ## age
-  report_df <- rbind(
-    report_df,
-    dbc::tests_to_report(
-      tests = c("all(0:90 %in% x$age)", "all(x$age >= 0)", "all(x$age <= 120)"),
-      fail_messages = c("Column 'age' should have at least the values 0-90.",
-                        "Column 'age' contains values less than 0.",
-                        "Column 'age' contains values great than 120."),
-      pass_messages = c("Column 'age' has all the values of 0-90!",
-                        "No value of column 'age' is less than 0!",
-                        "No value of column 'age' is great than 120!")
-    )
-  )
-  # prob
-  report_df <- rbind(
-    report_df,
-    dbc::tests_to_report(
-      tests = c("all(x$prob >= 0)", "all(x$prob <= 1)"),
-      fail_messages = c("Column 'prob' contains values less than 0.",
-                        "Column 'prob' contains values great than 1."),
-      pass_messages = c("No value of column 'prob' is less than 0!",
-                        "No value of column 'prob' is great than 1!")
-    )
-  )
-  return(report_df)
-}
-
-
-
-#' @rdname reports_assertions_tests
-#' @export
-assert_national_population_life_table_is_valid <- function(
-  x
-) {
-  report_df <- report_dataset_is_valid(
-    x = x, dataset_name = "national_population_life_table"
-  )
-  dbc::report_to_assertion(report_df)
-
-  report_df <- report_national_population_life_table_is_valid(x = x)
-  dbc::report_to_assertion(report_df)
-}
-
-
 #' @rdname reports_assertions_tests
 #' @export
 test_dataset_is_valid <- function(
@@ -209,7 +142,7 @@ report_dataset_columns_are_valid <- function(
   )
   reports_on_column_name_sets <- reports_on_column_name_sets[
     i = column_name_set_in_column_names
-  ]
+    ]
   if (nrow(reports_on_column_name_sets) > 0L) {
     dataset_env <- as.environment(x)
     parent.env(dataset_env) <- parent.frame(1L)
@@ -588,6 +521,103 @@ test_funs_by_column_name <- lapply(
   }
 )
 names(test_funs_by_column_name) <- names(report_funs_by_column_name)
+
+
+####################################################
+report_national_population_life_table_is_valid <- function(
+  x
+) {
+  dataset_env <- as.environment(x)
+  parent.env(dataset_env) <- environment()
+  first_year_survival <- nordcancore::get_global_nordcan_settings()$stat_survival_follow_up_first_year
+  first_year_lifetable <- range(x$year)[1]
+  year_nordcan <- nordcancore::nordcan_metadata_nordcan_year()
+
+  report_df <- dbc::tests_to_report(
+    tests = c("first_year_survival == first_year_lifetable",
+              "first_year_survival:year_nordcan %in% unique(year) ",
+              "0:90 %in% age",
+              "prob >= 0 & prob <= 1"
+    ),
+    fail_messages = c(sprintf("The first year for survival analysis (%s) & the beginning year of lifetable (%s) are not the same!",
+                              first_year_survival, first_year_lifetable),
+                      paste0(sprintf("Column 'year' should have every year between the first survival year (%s) and the current NORDCAN year (%s).",
+                                     first_year_survival, year_nordcan), " First five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
+                      paste0("Column 'age' should have at least the values 0-90.", " First five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
+                      paste0("The values of column 'prob' must between 0 and 1", " First five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}")
+    ),
+    pass_messages = c("The first year of survival & the first year of lifetable are same!",
+                      "Column 'year' has every year between the first survival year and the current NORDCAN year!",
+                      "Column 'age' has at least the values 0-90.",
+                      "The values of 'prob' are between 0 and 1."
+    ),
+    env = dataset_env
+  )
+  return(report_df)
+}
+
+
+assert_national_population_life_table_is_valid <- function(
+  x
+) {
+  report_df <- report_dataset_is_valid(
+    x = x, dataset_name = "national_population_life_table"
+  )
+  dbc::report_to_assertion(report_df)
+
+  report_df <- report_national_population_life_table_is_valid(
+    x = x
+  )
+  dbc::report_to_assertion(report_df)
+}
+
+
+report_unprocessed_cancer_death_count_dataset <- function(x) {
+  dataset_env <- as.environment(x)
+  parent.env(dataset_env) <- environment()
+  report_df <- dbc::tests_to_report(
+    tests = c("icd_code %in% nordcancore::nordcan_metadata_icd_by_version_to_entity()$icd_code",
+              "nchar(icd_code) %in% 3:4",
+              "(icd_version == 10 & grepl('^[a-zA-Z]', icd_code)) | icd_version != 10",
+              "!duplicated(dt, by = c('year', 'sex', 'region', 'agegroup', 'icd_code'))"
+    ),
+    fail_messages = c(paste0("Some value of 'icd_code' are not belong to the ICD-6/7/8/9/10;",
+                             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
+                      paste0("The length of some values of 'icd_code' are not 3 or 4. ",
+                             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
+                      paste0("Some of ICD-10 codes are not start with a letter",
+                             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
+                      paste0("Dataset has duplicate records",
+                             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}")),
+    pass_messages = c("All values of 'icd_code' are valid!",
+                      "All values of 'icd_code' having 3 or 4 characters!",
+                      "All ICD-10 codes start with a letter",
+                      "Dataset has no duplicate record"),
+    env = dataset_env
+  )
+
+  return(report_df)
+}
+
+
+
+
+
+assert_unprocessed_cancer_death_count_dataset <- function(
+  x
+) {
+  report_df <- report_dataset_is_valid(
+    x = x, dataset_name = "unprocessed_cancer_death_count_dataset"
+  )
+  dbc::report_to_assertion(report_df)
+
+  report_df <- report_unprocessed_cancer_death_count_dataset(
+    x = x
+  )
+  dbc::report_to_assertion(report_df)
+
+}
+
 
 
 
