@@ -20,7 +20,7 @@ add_nordcan_entity_columns <- function(x) {
   ####for most conversions (change entity for basal cell carcinomas, set entity
   # for meningeomas (316), set entity for gliomas (317))
   dt11 <- do.call(
-    expand.grid, list(morpho = seq(8090,8094), beh = 3, entity_level_30 = 888)
+    expand.grid, list(morpho = 8090:8098, beh = 3, entity_level_30 = 888)
   )
   dt12 <- do.call(
     expand.grid, list(morpho = seq(9530,9539), beh = seq(0,3), entity_level_30 = 316)
@@ -59,6 +59,14 @@ add_nordcan_entity_columns <- function(x) {
     i = dt2,
     on = c("morpho", "beh"),
     j = "entity_level_30" := i.new_entity_level_30
+  ]
+
+  entity_col_nms <- nordcancore::nordcan_metadata_column_name_set(
+    "column_name_set_entity"
+  )
+  x[
+    i = x[["entity_level_30"]] %in% c(888L, 999L),
+    j = (setdiff(entity_col_nms, "entity_level_30")) := NA_integer_
   ]
 
   return(x[])
@@ -138,12 +146,12 @@ enrich_nordcan_cancer_record_dataset <- function(
     )
   ]
 
-  period_levels <- nordcancore::nordcan_metadata_column_level_space_list(
-    "period"
-  )[["period"]]
-  year_breaks <- as.integer(c(period_levels, max(period_levels) + 5L))
-  x[, "period" := cut(x$yoi, year_breaks, right = FALSE, labels = FALSE)]
-  x[, "period" := period_levels[x$period]]
+  period_5_levels <- nordcancore::nordcan_metadata_column_level_space_list(
+    "period_5"
+  )[["period_5"]]
+  year_breaks <- as.integer(c(period_5_levels, max(period_5_levels) + 5L))
+  x[, "period_5" := cut(x$yoi, year_breaks, right = FALSE, labels = FALSE)]
+  x[, "period_5" := period_5_levels[x$period_5]]
 
   icd10_dt <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
@@ -235,7 +243,7 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,1L,0L)]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
   x[, "excl_surv_zerofou" := ifelse (x$surv_time==0,1L,0L)]
-  x[, "excl_surv_year" := ifelse(x$period %in% period_levels, 0L,1L)]
+  x[, "excl_surv_year" := ifelse(x$period_5 %in% period_5_levels, 0L,1L)]
   x[, "excl_surv_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
   x[, "excl_surv_vit_sta" := as.integer(x$vit_sta == 9L)]
 
