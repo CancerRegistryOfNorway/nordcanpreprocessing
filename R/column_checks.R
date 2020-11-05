@@ -93,6 +93,60 @@ assert_general_population_death_count_dataset_is_valid <- function(
   )
   dbc::report_to_assertion(report_df)
 }
+
+
+report_national_population_life_table_is_valid <- function(
+  x
+) {
+  ## First year of survival and lifetable;
+  first_year_survival <- nordcancore::get_global_nordcan_settings()$stat_survival_follow_up_first_year
+  first_year_lifetable <- range(x$year)[1]
+  report_df <- dbc::tests_to_report(
+    tests = c("first_year_survival == first_year_lifetable"),
+    fail_messages = c(sprintf("The first year for survival analysis (%s) & the beginning year of lifetable (%s) must be the same!",
+                              first_year_survival, first_year_lifetable) ),
+    pass_messages = c("The first year of survival & the first year of lifetable are same!")
+  )
+  ## value of 'year '
+  year_nordcan <- nordcancore::nordcan_metadata_nordcan_year()
+  report_df <- rbind(
+    report_df,
+    dbc::tests_to_report(
+      tests = c("all(first_year_survival:year_nordcan %in% unique(x$year))"),
+      fail_messages = c(sprintf("Column 'year' should have every year between the first survival year (%s) and the current NORDCAN year (%s).",
+                                first_year_survival, year_nordcan)),
+      pass_messages = c("Column 'year' should have every year between the first survival year and the current NORDCAN year!")
+    )
+  )
+  ## age
+  report_df <- rbind(
+    report_df,
+    dbc::tests_to_report(
+      tests = c("all(0:90 %in% x$age)", "all(x$age >= 0)", "all(x$age <= 120)"),
+      fail_messages = c("Column 'age' should have at least the values 0-90.",
+                        "Column 'age' contains values less than 0.",
+                        "Column 'age' contains values great than 120."),
+      pass_messages = c("Column 'age' has all the values of 0-90!",
+                        "No value of column 'age' is less than 0!",
+                        "No value of column 'age' is great than 120!")
+    )
+  )
+  # prob
+  report_df <- rbind(
+    report_df,
+    dbc::tests_to_report(
+      tests = c("all(x$prob >= 0)", "all(x$prob <= 1)"),
+      fail_messages = c("Column 'prob' contains values less than 0.",
+                        "Column 'prob' contains values great than 1."),
+      pass_messages = c("No value of column 'prob' is less than 0!",
+                        "No value of column 'prob' is great than 1!")
+    )
+  )
+  return(report_df)
+}
+
+
+
 #' @rdname reports_assertions_tests
 #' @export
 assert_national_population_life_table_is_valid <- function(
@@ -101,6 +155,9 @@ assert_national_population_life_table_is_valid <- function(
   report_df <- report_dataset_is_valid(
     x = x, dataset_name = "national_population_life_table"
   )
+  dbc::report_to_assertion(report_df)
+
+  report_df <- report_national_population_life_table_is_valid(x = x)
   dbc::report_to_assertion(report_df)
 }
 
