@@ -1,4 +1,8 @@
 
+
+
+
+
 add_nordcan_entity_columns <- function(x) {
 
   icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
@@ -17,50 +21,131 @@ add_nordcan_entity_columns <- function(x) {
   x <- merge(x, icd10_to_entity_dt, all.x = TRUE, all.y = FALSE,
              by = "icd10")
 
-  ####for most conversions (change entity for basal cell carcinomas, set entity
-  # for meningeomas (316), set entity for gliomas (317))
-  dt11 <- do.call(
-    expand.grid, list(morpho = 8090:8098, beh = 3, entity_level_30 = 888)
+  # @codedoc_comment_block entity
+  # entity 300 is modfied by removing bascal cell carcinoma morpho-beh
+  # combinations from it in function
+  # nordcanpreprocessing:::add_nordcan_entity_columns. the following
+  # combinations are set to 888L in column entity_level_30:
+  # ```{R}
+  # dt_basal <- data.table::CJ(
+  #   morpho = 8090:8098, beh = 3L
+  # )
+  # knitr::kable(dt_basal)
+  # ````
+  # @codedoc_comment_block entity
+  dt_basal <- data.table::CJ(
+    morpho = 8090:8098, beh = 3L, entity_level_30 = 888L
   )
-  dt12 <- do.call(
-    expand.grid, list(morpho = seq(9530,9539), beh = seq(0,3), entity_level_30 = 316)
-  )
-  dt13 <- do.call(
-    expand.grid, list(morpho = seq(9380,9411), beh = seq(1,3), entity_level_30 = 317)
-  )
-  dt14 <- do.call(
-    expand.grid, list(morpho = seq(9414,9460), beh = seq(1,3), entity_level_30 = 317)
-  )
-  dt15 <- do.call(
-    expand.grid, list(morpho = 9390, beh = 0, entity_level_30 = 317)
-  )
-
-  dt1 <- do.call(rbind, mget(paste0("dt", 11:15)))
-
-  ####for limit included bladder/urinary tumors to 8010/2, 8120/1, 8120/2, 8130/1, 8130/2
-  dt2=do.call(
-    expand.grid, list(
-      morpho = setdiff(unique(x$morpho),c(8010, 8120, 8130)),
-      beh = seq(0,2),
-      entity_level_30 = 280,
-      new_entity_level_30=999)
-  )
-
-
-  i.entity_level_30 <- NULL
+  i.entity_level_30 <- NULL # appease R CMD CHECK
   x[
-    i = dt1,
+    i = dt_basal,
     on = c("morpho", "beh"),
     j = "entity_level_30" := i.entity_level_30
   ]
 
+  # @codedoc_comment_block entity
+  # entity 319 is defined as all sub-types of 320 except 316 and 317. we define
+  # it in function nordcanpreprocessing:::add_nordcan_entity_columns
+  # by first assigning 319 to every entity_level_30 value to 319 under
+  # entity_level_20 == 320, and then defining 316 and 317 as exceptions to this.
+  # @codedoc_comment_block entity
+  x[
+    i = x[["entity_level_20"]] == 320L,
+    j = "entity_level_30" := 319L
+  ]
+
+  # @codedoc_comment_block entity
+  # entity 316 is defined as a sub-type of 320 based on morpho-beh combinations.
+  # the combinations are as follows:
+  # ```{R}
+  # dt_316 <-  data.table::CJ(
+  #   morpho = c(9530:9535, 9537:9539), beh = 0:3,
+  #   entity_level_20 = 320L
+  # )
+  # knitr::kable(dt_316)
+  # ```
+  # @codedoc_comment_block entity
+  dt_316 <-  data.table::CJ(
+    morpho = c(9530:9535, 9537:9539), beh = 0:3,
+    entity_level_20 = 320L, entity_level_30 = 316L
+  )
+  x[
+    i = dt_316,
+    on = c("morpho", "beh", "entity_level_20"),
+    j = "entity_level_30" := i.entity_level_30
+  ]
+
+  # @codedoc_comment_block entity
+  # entity 317 is defined as a sub-type of 320 based on morpho-beh combinations
+  # in function nordcanpreprocessing:::add_nordcan_entity_columns.
+  # the combinations are as follows:
+  # ```{R}
+  # morpho_317 <- c(
+  #   9380, 9381, 9382, 9383, 9384, 9385, 9390, 9391, 9392, 9393,
+  #   9394, 9395, 9396, 9400, 9401, 9410, 9411, 9412, 9413, 9420, 9421,
+  #   9423, 9424, 9425, 9430, 9431, 9432, 9440, 9441, 9442, 9444, 9445,
+  #   9450, 9451, 9460, 9470, 9471, 9472, 9473, 9474, 9475, 9476, 9477,
+  #   9478, 9480
+  # )
+  # dt_317 <- rbind(
+  #   data.table::CJ(morpho = morpho_317, beh = 1:3)
+  # )
+  # dt_317[, "entity_level_20" := 320L]
+  # knitr::kable(dt_317)
+  # ```
+  # @codedoc_comment_block entity
+  morpho_317 <- c(
+    9380, 9381, 9382, 9383, 9384, 9385, 9390, 9391, 9392, 9393,
+    9394, 9395, 9396, 9400, 9401, 9410, 9411, 9412, 9413, 9420, 9421,
+    9423, 9424, 9425, 9430, 9431, 9432, 9440, 9441, 9442, 9444, 9445,
+    9450, 9451, 9460, 9470, 9471, 9472, 9473, 9474, 9475, 9476, 9477,
+    9478, 9480
+  )
+  dt_317 <- rbind(
+    data.table::CJ(morpho = morpho_317, beh = 1:3)
+  )
+  dt_317[, "entity_level_20" := 320L]
+  dt_317[, "entity_level_30" := 317L]
+  x[
+    i = dt_317,
+    on = c("morpho", "beh", "entity_level_20"),
+    j = "entity_level_30" := i.entity_level_30
+  ]
+
+  # @codedoc_comment_block entity
+  # bladder/urinary tumours are only allowed to be in the following
+  # morpho-beh combinations (and set to 999L otherwise):
+  # ```{R}
+  # dt_280 <- data.table::CJ(
+  #   morpho = c(8010L, 8120L, 8130L), beh = 0:2
+  # )
+  # knitr::kable(dt_280)
+  # ```
+  # see function nordcanpreprocessing:::add_nordcan_entity_columns for the
+  # implementation.
+  #
+  # the NORDCAN 8.2 stata code was
+  # `* limit included bladder/urinary tumors to 8010/2, 8120/1, 8120/2, 8130/1, 8130/2`
+  # `replace entity_level1 = "999" if entity_level1 == "280" & inrange(beh, 0,2) & !inlist(morpho, 8010, 8120, 8130)`
+  # @codedoc_comment_block entity
+  dt_280_to_999 <-  data.table::CJ(
+    morpho = setdiff(x[["morpho"]], c(8010L, 8120L, 8130L)),
+    beh = 0:2,
+    entity_level_30 = 280L,
+    new_entity_level_30 = 999L
+  )
   i.new_entity_level_30 <- NULL
   x[
-    i = dt2,
-    on = c("morpho", "beh"),
+    i = dt_280_to_999,
+    on = c("morpho", "beh", "entity_level_30"),
     j = "entity_level_30" := i.new_entity_level_30
   ]
 
+  # @codedoc_comment_block entity
+  # we enforce all other entity_level_* columns to NA other than
+  # entity_level_30 when entity_level_30 is either 888 or 999. see function
+  # nordcanpreprocessing:::add_nordcan_entity_columns for the implementation.
+  # @codedoc_comment_block entity
   entity_col_nms <- nordcancore::nordcan_metadata_column_name_set(
     "column_name_set_entity"
   )
