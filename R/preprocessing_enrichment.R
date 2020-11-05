@@ -239,6 +239,10 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[, "excl_surv_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
   x[, "excl_surv_vit_sta" := as.integer(x$vit_sta == 9L)]
 
+  x[, "excl_surv_benign" := ifelse (x$excl_imp_benign==1,1L,0L)]
+  x[, "excl_surv_icd10conversion" := ifelse (x$excl_imp_icd10conversion==1,1L,0L)]
+  x[, "excl_surv_duplicate" := ifelse (x$excl_imp_duplicate==1,1L,0L)]
+
   excl_surv_col_nms <- names(x)[grepl("excl_surv_", names(x))]
   x[
     j = "excl_surv_total" := as.integer(rowSums(.SD) > 0L),
