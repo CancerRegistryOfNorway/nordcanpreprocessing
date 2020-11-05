@@ -87,10 +87,8 @@ add_nordcan_entity_columns <- function(x) {
   #   9450, 9451, 9460, 9470, 9471, 9472, 9473, 9474, 9475, 9476, 9477,
   #   9478, 9480
   # )
-  # dt_317 <- rbind(
-  #   data.table::CJ(morpho = morpho_317, beh = 1:3)
-  # )
-  # dt_317[, "entity_level_20" := 320L]
+  # dt_317 <- data.table::CJ(morpho = morpho_317, beh = 1:3)
+  # data.table::set(dt_317, j = "entity_level_20", value = 320L)
   # knitr::kable(dt_317)
   # ```
   # @codedoc_comment_block entity
@@ -101,9 +99,7 @@ add_nordcan_entity_columns <- function(x) {
     9450, 9451, 9460, 9470, 9471, 9472, 9473, 9474, 9475, 9476, 9477,
     9478, 9480
   )
-  dt_317 <- rbind(
-    data.table::CJ(morpho = morpho_317, beh = 1:3)
-  )
+  dt_317 <- data.table::CJ(morpho = morpho_317, beh = 1:3)
   dt_317[, "entity_level_20" := 320L]
   dt_317[, "entity_level_30" := 317L]
   x[
