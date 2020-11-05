@@ -342,6 +342,20 @@ enrich_nordcan_cancer_record_dataset <- function(
     .SDcols = excl_surv_col_nms
   ]
 
+  dbc::report_to_assertion(
+    dbc::tests_to_report(
+      tests = "pmax(x$excl_imp_total, x$excl_surv_total) == x$excl_surv_total",
+      fail_messages = paste0(
+        "x$excl_surv_total did not have every exclusion that ",
+        "x$excl_imp_total has"
+      ),
+      pass_messages = c(
+        "x$excl_surv_total had every exclusion that x$excl_imp_total has "
+      )
+    ),
+    assertion_type = "prod_output"
+  )
+
   return(x[])
 }
 
