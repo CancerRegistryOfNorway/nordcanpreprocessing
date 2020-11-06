@@ -28,9 +28,28 @@ nordcan_processed_cancer_death_count_dataset <- function(
   assert_unprocessed_cancer_death_count_dataset(x)
 
   conversion_dt <- nordcancore::nordcan_metadata_icd_by_version_to_entity()
+  conversion_dt[, "was_defined" := TRUE]
 
   x <- merge(x, conversion_dt, by = c("icd_version", "icd_code"),
              all.x = TRUE, all.y = FALSE)
+  x[is.na(x[["was_defined"]]), "was_defined" := FALSE]
+  undefined <- x[x[["was_defined"]] == FALSE, ]
+  if (nrow(undefined) > 0L) {
+    undefined <- undefined[
+      i = !duplicated(undefined, by = c("icd_version", "icd_code")),
+      j = .SD,
+      .SDcols = c("icd_version", "icd_code")
+      ]
+    message("* nordcanpreprocessing::",
+            "nordcan_processed_cancer_death_count_dataset: there were ",
+            nrow(undefined), " icd_version-icd_code combinations without ",
+            "an entity definition (having some is normal); you can inspect ",
+            "these in the object named \"._undefined\" in your workspace; use ",
+            "e.g. print(._undefined)")
+    ge <- globalenv()
+    ge[["._undefined"]] <- undefined
+  }
+  x[, "was_defined" := NULL]
 
   col_nms <- nordcancore::nordcan_metadata_column_name_set(
     "column_name_set_processed_cancer_death_count_dataset"
@@ -51,30 +70,30 @@ nordcan_processed_cancer_death_count_dataset <- function(
       j = lapply(.SD, sum),
       keyby = stratum_col_nms,
       .SDcols = "cancer_death_count"
-      ]
+    ]
   }
   else {
-  stratum_col_nms_1 <- setdiff(names(x), "cancer_death_count")
-  x1 <- x[
-    j = lapply(.SD, sum),
-    keyby = stratum_col_nms_1,
-    .SDcols = "cancer_death_count"
-  ]
-
-  stratum_col_nms_2 <- setdiff(names(x), c("region", "cancer_death_count"))
-  x2 <- x1[
-    j = lapply(.SD, sum),
-    keyby = stratum_col_nms_2,
-    .SDcols = "cancer_death_count"
+    stratum_col_nms_1 <- setdiff(names(x), "cancer_death_count")
+    x1 <- x[
+      j = lapply(.SD, sum),
+      keyby = stratum_col_nms_1,
+      .SDcols = "cancer_death_count"
     ]
 
-  region_0 <- unique(x1$region[grepl('0$', x1$region)])
+    stratum_col_nms_2 <- setdiff(names(x), c("region", "cancer_death_count"))
+    x2 <- x1[
+      j = lapply(.SD, sum),
+      keyby = stratum_col_nms_2,
+      .SDcols = "cancer_death_count"
+    ]
 
-  x1 <- x1[!grepl('0$', x1$region), ]
+    region_0 <- unique(x1$region[grepl('0$', x1$region)])
 
-  y <- rbind(x1, x2, fill = TRUE)
-  y$region[is.na(y$region)] <- region_0
-  data.table::setorderv(y, c("sex", "region", "agegroup", "entity", "year"))
+    x1 <- x1[!grepl('0$', x1$region), ]
+
+    y <- rbind(x1, x2, fill = TRUE)
+    y$region[is.na(y$region)] <- region_0
+    data.table::setorderv(y, c("sex", "region", "agegroup", "entity", "year"))
 
   }
 
