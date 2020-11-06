@@ -15,6 +15,10 @@
 \alias{report_column_is_valid}
 \alias{assert_column_is_valid}
 \alias{test_column_is_valid}
+\alias{report_national_population_life_table_is_valid}
+\alias{assert_national_population_life_table_is_valid}
+\alias{report_unprocessed_cancer_death_count_dataset}
+\alias{assert_unprocessed_cancer_death_count_dataset}
 \title{Reports, Assertions, and Tests on NORDCAN Datasets and Columns}
 \usage{
 report_dataset_is_valid(x, dataset_name)
@@ -42,6 +46,14 @@ report_column_is_valid(x, column_name)
 assert_column_is_valid(x, column_name)
 
 test_column_is_valid(x, column_name)
+
+report_national_population_life_table_is_valid(x)
+
+assert_national_population_life_table_is_valid(x)
+
+report_unprocessed_cancer_death_count_dataset(x)
+
+assert_unprocessed_cancer_death_count_dataset(x)
 }
 \arguments{
 \item{x}{\verb{[data.frame]} (mandatory, no default)

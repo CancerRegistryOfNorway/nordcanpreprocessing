@@ -523,7 +523,8 @@ test_funs_by_column_name <- lapply(
 names(test_funs_by_column_name) <- names(report_funs_by_column_name)
 
 
-####################################################
+#' @rdname reports_assertions_tests
+#' @export
 report_national_population_life_table_is_valid <- function(
   x
 ) {
@@ -557,6 +558,8 @@ report_national_population_life_table_is_valid <- function(
 }
 
 
+#' @rdname reports_assertions_tests
+#' @export
 assert_national_population_life_table_is_valid <- function(
   x
 ) {
@@ -572,6 +575,8 @@ assert_national_population_life_table_is_valid <- function(
 }
 
 
+#' @rdname reports_assertions_tests
+#' @export
 report_unprocessed_cancer_death_count_dataset <- function(x) {
   dataset_env <- as.environment(x)
   parent.env(dataset_env) <- environment()
@@ -603,6 +608,8 @@ report_unprocessed_cancer_death_count_dataset <- function(x) {
 
 
 
+#' @rdname reports_assertions_tests
+#' @export
 assert_unprocessed_cancer_death_count_dataset <- function(
   x
 ) {
