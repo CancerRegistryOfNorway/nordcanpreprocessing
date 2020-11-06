@@ -531,28 +531,27 @@ report_national_population_life_table_is_valid <- function(
   dataset_env <- as.environment(x)
   parent.env(dataset_env) <- environment()
   first_year_survival <- nordcancore::get_global_nordcan_settings()$stat_survival_follow_up_first_year
-  first_year_lifetable <- range(x$year)[1]
   year_nordcan <- nordcancore::nordcan_metadata_nordcan_year()
 
   report_df <- dbc::tests_to_report(
-    tests = c("first_year_survival == first_year_lifetable",
-              "first_year_survival:year_nordcan %in% unique(year) ",
+    tests = c("first_year_survival:year_nordcan %in% unique(year) ",
               "0:90 %in% age",
               "prob >= 0 & prob <= 1"
     ),
-    fail_messages = c(sprintf("The first year for survival analysis (%s) & the beginning year of lifetable (%s) are not the same!",
-                              first_year_survival, first_year_lifetable),
-                      paste0(sprintf("Column 'year' should have every year between the first survival year (%s) and the current NORDCAN year (%s).",
-                                     first_year_survival, year_nordcan), " First five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
-                      paste0("Column 'age' should have at least the values 0-90.", " First five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
-                      paste0("The values of column 'prob' must between 0 and 1", " First five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}")
+    fail_messages = c(
+      paste0(sprintf("Column 'year' should have every year between the first survival year (%s) and the current NORDCAN year (%s).",
+                     first_year_survival, year_nordcan), " First five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
+      "Column 'age' should have at least the values 0-90.",
+      paste0("The values of column 'prob' must between 0 and 1",
+             " First five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}")
     ),
-    pass_messages = c("The first year of survival & the first year of lifetable are same!",
-                      "Column 'year' has every year between the first survival year and the current NORDCAN year!",
-                      "Column 'age' has at least the values 0-90.",
-                      "The values of 'prob' are between 0 and 1."
+    pass_messages = c(
+      "Column 'year' has every year between the first survival year and the current NORDCAN year!",
+      "Column 'age' has at least the values 0-90.",
+      "The values of 'prob' are between 0 and 1."
     ),
-    env = dataset_env
+    env = dataset_env,
+    call = match.call()
   )
   return(report_df)
 }
