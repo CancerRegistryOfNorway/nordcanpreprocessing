@@ -25,7 +25,7 @@
 nordcan_processed_cancer_death_count_dataset <- function(
   x
 ) {
-  assert_dataset_is_valid(x, "unprocessed_cancer_death_count_dataset")
+  assert_unprocessed_cancer_death_count_dataset(x)
 
   conversion_dt <- nordcancore::nordcan_metadata_icd_by_version_to_entity()
 

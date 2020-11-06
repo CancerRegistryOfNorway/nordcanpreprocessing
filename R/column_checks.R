@@ -580,24 +580,34 @@ report_unprocessed_cancer_death_count_dataset <- function(x) {
   dataset_env <- as.environment(x)
   parent.env(dataset_env) <- environment()
   report_df <- dbc::tests_to_report(
-    tests = c("icd_code %in% nordcancore::nordcan_metadata_icd_by_version_to_entity()$icd_code",
-              "nchar(icd_code) %in% 3:4",
-              "(icd_version == 10 & grepl('^[a-zA-Z]', icd_code)) | icd_version != 10",
-              "!duplicated(dt, by = c('year', 'sex', 'region', 'agegroup', 'icd_code'))"
+    tests = c(
+      "icd_version %in% 6:10",
+      "icd_code %in% nordcancore::nordcan_metadata_icd_by_version_to_entity()$icd_code",
+      "nchar(icd_code) %in% 3:4",
+      "(icd_version == 10 & grepl('^[a-zA-Z]', icd_code)) | icd_version != 10",
+      "!duplicated(x, by = c('year', 'sex', 'region', 'agegroup', 'icd_code', 'icd_version'))"
     ),
-    fail_messages = c(paste0("Some value of 'icd_code' are not belong to the ICD-6/7/8/9/10;",
-                             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
-                      paste0("The length of some values of 'icd_code' are not 3 or 4. ",
-                             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
-                      paste0("Some of ICD-10 codes are not start with a letter",
-                             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
-                      paste0("Dataset has duplicate records",
-                             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}")),
-    pass_messages = c("All values of 'icd_code' are valid!",
-                      "All values of 'icd_code' having 3 or 4 characters!",
-                      "All ICD-10 codes start with a letter",
-                      "Dataset has no duplicate record"),
-    env = dataset_env
+    fail_messages = c(
+      paste0("Only icd_version values 6-10 are allowed; you had also these ",
+             "values (first five): ${deparse(utils::head(unique(icd_version[wh_fail]), 5L))}"),
+      paste0("Some value of 'icd_code' are not belong to the ICD-6/7/8/9/10;",
+             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
+      paste0("The length of some values of 'icd_code' are not 3 or 4. ",
+             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
+      paste0("Some of ICD-10 codes are not start with a letter",
+             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}"),
+      paste0("Dataset has duplicate records",
+             "first five positions of invalid values: ${deparse(utils::head(wh_fail, 5L))}")
+    ),
+    pass_messages = c(
+      "All values of 'icd_version' are valid.",
+      "All values of 'icd_code' are valid!",
+      "All values of 'icd_code' having 3 or 4 characters!",
+      "All ICD-10 codes start with a letter",
+      "Dataset has no duplicate record"
+    ),
+    env = dataset_env,
+    call = match.call()
   )
 
   return(report_df)
