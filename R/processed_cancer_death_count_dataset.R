@@ -97,5 +97,6 @@ nordcan_processed_cancer_death_count_dataset <- function(
 
   }
 
-  return(y[j = .SD, .SDcols = col_nms][])
+  y <- y[i = !is.na(y[["entity"]]), j = .SD, .SDcols = col_nms]
+  return(y[])
 }
