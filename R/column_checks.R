@@ -390,24 +390,59 @@ report_funs_by_column_format <- list(
       set = levels
     )
   },
+
+
   String = function(x, column_name) {
     column_specification <- nordcancore::nordcan_metadata_column_specifications(
       column_name
     )
-    dataset_env <- as.environment(x)
-    parent.env(dataset_env) <- environment()
-    levels <- column_specification[["levels"]]
-    dbc::tests_to_report(
-      tests = paste0("nchar(",column_name,") <= 50L"),
-      fail_messages = paste0(
-        "some elements of ${column_name} had more than 50 characters; first ",
-        "five overlong elements: ${deparse(utils::head(wh_fail, 5L))}"
-      ),
-      pass_messages = paste0(
-        "All elements of column ${column_name} had at most 50 characters."
-      ),
-      env = dataset_env
+    report_df <- dbc::report_is_character_nonNA_vector(
+      x = x[[column_name]],
+      x_nm = paste0("x$", column_name)
     )
+    max_nchars <- column_specification[["max_nchars"]]
+    digit_only <- column_specification[["digit_only"]]
+    if (!is.null(max_nchars)) {
+      report_df <- rbind(
+        report_df,
+        dbc::tests_to_report(
+          tests = c(
+            "nchar(x[[column_name]]) <= max_nchars"
+          ),
+          fail_messages = c(
+            paste0(
+              "Some of ${column_name} had characters more than ${max_nchars}; first five positions of ",
+              "invalid values: ${deparse(utils::head(wh_fail, 5L))}"
+            )
+          ),
+          pass_messages = c(
+            "All values of ${column_name} having characters less than ${max_nchars}"
+          )
+        )
+      )
+    }
+
+    if (digit_only) {
+      report_df <- rbind(
+        report_df,
+        dbc::tests_to_report(
+          tests = c(
+            "grepl('^[0-9]*$', x[[column_name]])"
+          ),
+          fail_messages = c(
+            paste0(
+              "Some of ${column_name} containing non-digit characters; first five positions of ",
+              "invalid values: ${deparse(utils::head(wh_fail, 5L))}"
+            )
+          ),
+          pass_messages = c(
+            "All values of ${column_name} containing only digit characters!"
+          )
+        )
+      )
+    }
+
+    return(report_df)
   },
   "ICD-10" = function(x, column_name) {
     column_specification <- nordcancore::nordcan_metadata_column_specifications(
