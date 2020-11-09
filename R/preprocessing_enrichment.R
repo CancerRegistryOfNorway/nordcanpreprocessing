@@ -266,17 +266,17 @@ enrich_nordcan_cancer_record_dataset <- function(
     iarccrgtools_work_dir = iarccrgtools_work_dir
   )
 
-   if (!"multiple_primary_input.mul" %in% names(mp)) {
+  if (!"multiple_primary_input.mul" %in% names(mp)) {
     x[, "excl_imp_duplicate" := rep(0L, nrow(x))]
   } else {
-  i.multiple_primary_input.mul <- NULL # this only to appease R CMD CHECK
-  x[
-    i = mp,
-    on = "tum",
-    j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
-  ]
-  x[, "excl_imp_duplicate" := ifelse(grepl("\\*",x$excl_imp_duplicate),1L,0L)]
-     }
+    i.multiple_primary_input.mul <- NULL # this only to appease R CMD CHECK
+    x[
+      i = mp,
+      on = "tum",
+      j = "excl_imp_duplicate" := i.multiple_primary_input.mul,
+    ]
+    x[, "excl_imp_duplicate" := ifelse(grepl("\\*",x$excl_imp_duplicate),1L,0L)]
+  }
 
   # it may be that multiple_primary_input.exl is not created if IARC CRG Tools
   # found nothing to exclude.
@@ -331,6 +331,12 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[, "excl_surv_benign" := ifelse (x$excl_imp_benign==1,1L,0L)]
   x[, "excl_surv_icd10conversion" := ifelse (x$excl_imp_icd10conversion==1,1L,0L)]
   x[, "excl_surv_duplicate" := ifelse (x$excl_imp_duplicate==1,1L,0L)]
+
+  x[
+    j = "excl_surv_male_breast" := ifelse(
+      x$entity_level_30 == 180L & x$sex == 1L, 1L, 0L
+    )
+  ]
 
   excl_surv_col_nms <- names(x)[grepl("excl_surv_", names(x))]
   x[
