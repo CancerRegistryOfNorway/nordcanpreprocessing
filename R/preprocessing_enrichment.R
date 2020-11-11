@@ -334,7 +334,7 @@ enrich_nordcan_cancer_record_dataset <- function(
 
   x[
     j = "excl_surv_male_breast" := ifelse(
-      x$entity_level_30 == 180L & x$sex == 1L, 1L, 0L
+      x$entity_level_30 %in% 180L & x$sex == 1L, 1L, 0L
     )
   ]
 
@@ -346,10 +346,10 @@ enrich_nordcan_cancer_record_dataset <- function(
 
   dbc::report_to_assertion(
     dbc::tests_to_report(
-      tests = "pmax(x$excl_imp_total, x$excl_surv_total) == x$excl_surv_total",
+      tests = "!(x$excl_imp_total == 1L & x$excl_surv_total == 0L)",
       fail_messages = paste0(
         "x$excl_surv_total did not have every exclusion that ",
-        "x$excl_imp_total has"
+        "x$excl_imp_total has (${n_fail} failures)"
       ),
       pass_messages = c(
         "x$excl_surv_total had every exclusion that x$excl_imp_total has "
