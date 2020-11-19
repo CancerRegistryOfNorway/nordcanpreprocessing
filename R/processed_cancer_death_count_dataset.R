@@ -45,7 +45,11 @@ nordcan_processed_cancer_death_count_dataset <- function(
             nrow(undefined), " icd_version-icd_code combinations without ",
             "an entity definition (having some is normal); you can inspect ",
             "these in the object named \"._undefined\" in your workspace; use ",
-            "e.g. print(._undefined)")
+            "e.g. print(._undefined)", "Most ICD7-ICD9-codes from 210 and above and", 
+            "ICD10-codes starting with 'D' are not supposed to get entity codes. ",
+            "You can ignore these. If you have ICD7-ICD9-code in range 140-209 or ",
+            "ICD10-codes starting with 'C' which do not get an entity, ",
+            "contact Siri Larønningen (siri.laronningen@kreftregisteret.no).")
     ge <- globalenv()
     ge[["._undefined"]] <- undefined
   }
