@@ -39,17 +39,19 @@ nordcan_processed_cancer_death_count_dataset <- function(
       i = !duplicated(undefined, by = c("icd_version", "icd_code")),
       j = .SD,
       .SDcols = c("icd_version", "icd_code")
-      ]
-    message("* nordcanpreprocessing::",
-            "nordcan_processed_cancer_death_count_dataset: there were ",
-            nrow(undefined), " icd_version-icd_code combinations without ",
-            "an entity definition (having some is normal); you can inspect ",
-            "these in the object named \"._undefined\" in your workspace; use ",
-            "e.g. print(._undefined)", "Most ICD7-ICD9-codes from 210 and above and", 
-            "ICD10-codes starting with 'D' are not supposed to get entity codes. ",
-            "You can ignore these. If you have ICD7-ICD9-code in range 140-209 or ",
-            "ICD10-codes starting with 'C' which do not get an entity, ",
-            "contact Siri Larønningen (siri.laronningen@kreftregisteret.no).")
+    ]
+    message(
+      "* nordcanpreprocessing::",
+      "nordcan_processed_cancer_death_count_dataset: there were ",
+      nrow(undefined), " icd_version-icd_code combinations without ",
+      "an entity definition (having some is normal); you can inspect ",
+      "these in the object named \"._undefined\" in your workspace; use ",
+      "e.g. print(._undefined)", "Most ICD7-ICD9-codes from 210 and above and",
+      "ICD10-codes starting with 'D' are not supposed to get entity codes. ",
+      "You can ignore these. If you have ICD7-ICD9-code in range 140-209 or ",
+      "ICD10-codes starting with 'C' which do not get an entity, ",
+      "contact Siri Larønningen (siri.laronningen@kreftregisteret.no)."
+    )
     ge <- globalenv()
     ge[["._undefined"]] <- undefined
   }
@@ -68,39 +70,32 @@ nordcan_processed_cancer_death_count_dataset <- function(
     sub_x[]
   }))
 
-  if(length(unique(x$region)) == 1){
-    stratum_col_nms <- setdiff(names(x), "cancer_death_count")
-    y <- x[
+  stratum_col_nms <- setdiff(names(x), "cancer_death_count")
+  y <- x[
+    j = lapply(.SD, sum),
+    keyby = stratum_col_nms,
+    .SDcols = "cancer_death_count"
+  ]
+  if (data.table::uniqueN(y[["region"]]) > 1L) {
+    participant_info <- nordcancore::nordcan_metadata_participant_info()
+    topregion_number <- participant_info[["topregion_number"]]
+    subregion_number_set <- nordcancore::nordcan_metadata_column_level_space_list(
+      "region"
+    )[["region"]]
+    subregion_number_set <- setdiff(subregion_number_set, topregion_number)
+    y_subregions <- y[y[["region"]] %in% subregion_number_set, ]
+    nonregion_stratum_col_nms <- setdiff(stratum_col_nms, "region")
+    y_topregion <- y[
       j = lapply(.SD, sum),
-      keyby = stratum_col_nms,
+      keyby = nonregion_stratum_col_nms,
       .SDcols = "cancer_death_count"
     ]
-  }
-  else {
-    stratum_col_nms_1 <- setdiff(names(x), "cancer_death_count")
-    x1 <- x[
-      j = lapply(.SD, sum),
-      keyby = stratum_col_nms_1,
-      .SDcols = "cancer_death_count"
-    ]
 
-    stratum_col_nms_2 <- setdiff(names(x), c("region", "cancer_death_count"))
-    x2 <- x1[
-      j = lapply(.SD, sum),
-      keyby = stratum_col_nms_2,
-      .SDcols = "cancer_death_count"
-    ]
-
-    region_0 <- unique(x1$region[grepl('0$', x1$region)])
-
-    x1 <- x1[!grepl('0$', x1$region), ]
-
-    y <- rbind(x1, x2, fill = TRUE)
-    y$region[is.na(y$region)] <- region_0
-    data.table::setorderv(y, c("sex", "region", "agegroup", "entity", "year"))
-
+    y <- rbind(y_topregion, y_subregions)
   }
 
   y <- y[i = !is.na(y[["entity"]]), j = .SD, .SDcols = col_nms]
+  data.table::setcolorder(y, stratum_col_nms)
+  data.table::setkeyv(y, stratum_col_nms)
   return(y[])
 }
