@@ -71,31 +71,33 @@ nordcan_processed_cancer_death_count_dataset <- function(
   }))
 
   stratum_col_nms <- setdiff(names(x), "cancer_death_count")
-  y <- x[
+
+  x <- x[
+    i = !is.na(x[["entity"]]),
     j = lapply(.SD, sum),
     keyby = stratum_col_nms,
     .SDcols = "cancer_death_count"
   ]
-  if (data.table::uniqueN(y[["region"]]) > 1L) {
+  if (data.table::uniqueN(x[["region"]]) > 1L) {
     participant_info <- nordcancore::nordcan_metadata_participant_info()
     topregion_number <- participant_info[["topregion_number"]]
     subregion_number_set <- nordcancore::nordcan_metadata_column_level_space_list(
       "region"
     )[["region"]]
     subregion_number_set <- setdiff(subregion_number_set, topregion_number)
-    y_subregions <- y[y[["region"]] %in% subregion_number_set, ]
+    x_subregions <- x[x[["region"]] %in% subregion_number_set, ]
     nonregion_stratum_col_nms <- setdiff(stratum_col_nms, "region")
-    y_topregion <- y[
+    x_topregion <- x[
       j = lapply(.SD, sum),
       keyby = nonregion_stratum_col_nms,
       .SDcols = "cancer_death_count"
     ]
+    x_topregion[, "region" := topregion_number]
 
-    y <- rbind(y_topregion, y_subregions)
+    x <- rbind(x_topregion, x_subregions, use.names = TRUE)
   }
 
-  y <- y[i = !is.na(y[["entity"]]), j = .SD, .SDcols = col_nms]
-  data.table::setcolorder(y, stratum_col_nms)
-  data.table::setkeyv(y, stratum_col_nms)
-  return(y[])
+  data.table::setcolorder(x, stratum_col_nms)
+  data.table::setkeyv(x, stratum_col_nms)
+  return(x[])
 }
