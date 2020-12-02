@@ -256,8 +256,8 @@ enrich_nordcan_cancer_record_dataset <- function(
       on = "tum",
       j = "excl_imp_error" := i.icdo3_to_icd10_input.eO3to10,
     ]
-    x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
   }
+  x[, "excl_imp_icd10conversion" := ifelse (is.na(x$excl_imp_error),0L,1L)]
 
   mp <- nordcanpreprocessing::iarccrgtools_tool(
     x = x,
