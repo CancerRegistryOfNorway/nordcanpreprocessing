@@ -13,7 +13,7 @@ Imports:
     data.table,
     dbc,
     iarccrgtools,
-    nordcancore (== 1.0.1)
+    nordcancore (>= 1.0.2)
 Encoding: UTF-8
 LazyData: true
 Depends: 
