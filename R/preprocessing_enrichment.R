@@ -172,7 +172,9 @@ add_nordcan_entity_columns <- function(x) {
 #' @section New columns:
 #' See https://github.com/CancerRegistryOfNorway/NORDCAN/wiki/Module-PreprocessEnrich
 #' @eval nordcancore::object_code_documentation(
-#'   "R/preprocessing_enrichment.R", "."
+#'   text_file_paths = "R/preprocessing_enrichment.R",
+#'   regex = "entity",
+#'   tag = "@section Entity exceptions:"
 #' )
 #' @export
 #' @importFrom data.table := .SD

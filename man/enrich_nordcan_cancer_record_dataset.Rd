@@ -34,3 +34,59 @@ See https://github.com/CancerRegistryOfNorway/NORDCAN/wiki/Call-for-data---Incid
 See https://github.com/CancerRegistryOfNorway/NORDCAN/wiki/Module-PreprocessEnrich
 }
 
+\section{Entity exceptions}{
+
+
+entity 300 is modfied by removing bascal cell carcinoma morpho-beh
+combinations from it in function
+nordcanpreprocessing:::add_nordcan_entity_columns. the following
+combinations are set to 888L in column entity_level_30:\if{html}{\out{<div class="{R}">}}\preformatted{dt_basal <- data.table::CJ(
+morpho = 8090:8098, beh = 3L
+)
+knitr::kable(dt_basal)
+}\if{html}{\out{</div>}}
+
+entity 319 is defined as all sub-types of 320 except 316 and 317. we define
+it in function nordcanpreprocessing:::add_nordcan_entity_columns
+by first assigning 319 to every entity_level_30 value to 319 under
+entity_level_20 == 320, and then defining 316 and 317 as exceptions to this.
+entity 316 is defined as a sub-type of 320 based on morpho-beh combinations.
+the combinations are as follows:\if{html}{\out{<div class="{R}">}}\preformatted{dt_316 <-  data.table::CJ(
+morpho = c(9530:9535, 9537:9539), beh = 0:3,
+entity_level_20 = 320L
+)
+knitr::kable(dt_316)
+}\if{html}{\out{</div>}}
+
+entity 317 is defined as a sub-type of 320 based on morpho-beh combinations
+in function nordcanpreprocessing:::add_nordcan_entity_columns.
+the combinations are as follows:\if{html}{\out{<div class="{R}">}}\preformatted{morpho_317 <- c(
+9380, 9381, 9382, 9383, 9384, 9385, 9390, 9391, 9392, 9393,
+9394, 9395, 9396, 9400, 9401, 9410, 9411, 9412, 9413, 9420, 9421,
+9423, 9424, 9425, 9430, 9431, 9432, 9440, 9441, 9442, 9444, 9445,
+9450, 9451, 9460, 9470, 9471, 9472, 9473, 9474, 9475, 9476, 9477,
+9478, 9480
+)
+dt_317 <- data.table::CJ(morpho = morpho_317, beh = 1:3)
+data.table::set(dt_317, j = "entity_level_20", value = 320L)
+knitr::kable(dt_317)
+}\if{html}{\out{</div>}}
+
+bladder/urinary tumours are only allowed to be in the following
+morpho-beh combinations (and set to 999L otherwise):\if{html}{\out{<div class="{R}">}}\preformatted{dt_280 <- data.table::CJ(
+morpho = c(8010L, 8120L, 8130L), beh = 0:2
+)
+knitr::kable(dt_280)
+}\if{html}{\out{</div>}}
+
+see function nordcanpreprocessing:::add_nordcan_entity_columns for the
+implementation.
+
+the NORDCAN 8.2 stata code was
+\verb{* limit included bladder/urinary tumors to 8010/2, 8120/1, 8120/2, 8130/1, 8130/2}
+\verb{replace entity_level1 = "999" if entity_level1 == "280" & inrange(beh, 0,2) & !inlist(morpho, 8010, 8120, 8130)}
+we enforce all other entity_level_* columns to NA other than
+entity_level_30 when entity_level_30 is either 888 or 999. see function
+nordcanpreprocessing:::add_nordcan_entity_columns for the implementation.
+}
+
