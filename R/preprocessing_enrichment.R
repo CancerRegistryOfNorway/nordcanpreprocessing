@@ -171,23 +171,10 @@ add_nordcan_entity_columns <- function(x) {
 #' See https://github.com/CancerRegistryOfNorway/NORDCAN/wiki/Call-for-data---Incidence
 #' @section New columns:
 #' See https://github.com/CancerRegistryOfNorway/NORDCAN/wiki/Module-PreprocessEnrich
-#'
+#' @eval nordcancore::object_code_documentation(
+#'   "R/preprocessing_enrichment.R", "."
+#' )
 #' @export
-
-###enrichment" part of our preprocessing.
-###function for creating columns based on information in the other columns.
-###for the moment for the columns other than the entity ones and the ones "Created by R-program from checktool-info"
-
-#
-# ###data
-# data=read.csv("Cancer_case_dataset.csv")
-# data$date_of_birth=as.Date(data$date_of_birth,format="%d.%m.%Y")
-# data$date_of_incidence=as.Date(data$date_of_incidence,format="%d.%m.%Y")
-# data$end_of_followup=as.Date(data$end_of_followup,format="%d.%m.%Y")
-# data=data[,-which(names(data) %in% c("icd10","mob","yob","moi","mof","yof","surv_time","period","excl_surv_age","excl_surv_dco",
-# "excl_surv_autopsy","excl_surv_negativefou","excl_surv_zerofou","excl_imp_error"))]
-
-
 #' @importFrom data.table := .SD
 enrich_nordcan_cancer_record_dataset <- function(
   x,
