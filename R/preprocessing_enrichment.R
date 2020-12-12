@@ -5,6 +5,13 @@
 
 add_nordcan_entity_columns <- function(x) {
 
+  # @codedoc_comment_block entity
+  #
+  # Entities are added to the NORDCAN cancer record dataset in function
+  # add_nordcan_entity_columns. It first retrieves the table of ICD-10 to entity
+  # conversion using `nordcancore::nordcan_metadata_icd10_to_entity()`.
+  #
+  # @codedoc_comment_block entity
   icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
 
   undefined_icd10_codes <- setdiff(
@@ -18,10 +25,24 @@ add_nordcan_entity_columns <- function(x) {
             "please contact the software maintainers")
   }
 
+  # @codedoc_comment_block entity
+  #
+  # The table of ICD-10 to entity definitions is merged with the cancer record
+  # dataset by column "icd10".
+  #
+  # @codedoc_comment_block entity
   x <- merge(x, icd10_to_entity_dt, all.x = TRUE, all.y = FALSE,
              by = "icd10")
 
+
   # @codedoc_comment_block entity
+  #
+  # There are a number of exceptions to the ICD-10 to entity conversion.
+  #
+  # @codedoc_comment_block entity
+
+  # @codedoc_comment_block entity
+  #
   # entity 300 is modfied by removing bascal cell carcinoma morpho-beh
   # combinations from it in function
   # nordcanpreprocessing:::add_nordcan_entity_columns. the following
@@ -32,6 +53,7 @@ add_nordcan_entity_columns <- function(x) {
   # )
   # knitr::kable(dt_basal)
   # ````
+  #
   # @codedoc_comment_block entity
   dt_basal <- data.table::CJ(
     morpho = 8090:8098, beh = 3L, entity_level_30 = 888L
