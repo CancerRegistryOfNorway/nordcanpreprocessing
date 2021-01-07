@@ -3,8 +3,15 @@
 
 
 
-add_nordcan_entity_columns <- function(x) {
+merge_nordcan_entity_columns <- function(x) {
 
+  # @codedoc_comment_block entity
+  #
+  # Entities are added to the NORDCAN cancer record dataset in function
+  # merge_nordcan_entity_columns. It first retrieves the table of ICD-10 to entity
+  # conversion using `nordcancore::nordcan_metadata_icd10_to_entity()`.
+  #
+  # @codedoc_comment_block entity
   icd10_to_entity_dt <- nordcancore::nordcan_metadata_icd10_to_entity()
 
   undefined_icd10_codes <- setdiff(
@@ -18,13 +25,27 @@ add_nordcan_entity_columns <- function(x) {
             "please contact the software maintainers")
   }
 
+  # @codedoc_comment_block entity
+  #
+  # The table of ICD-10 to entity definitions is merged with the cancer record
+  # dataset by column "icd10".
+  #
+  # @codedoc_comment_block entity
   x <- merge(x, icd10_to_entity_dt, all.x = TRUE, all.y = FALSE,
              by = "icd10")
 
+
   # @codedoc_comment_block entity
+  #
+  # There are a number of exceptions to the ICD-10 to entity conversion.
+  #
+  # @codedoc_comment_block entity
+
+  # @codedoc_comment_block entity
+  #
   # entity 300 is modfied by removing bascal cell carcinoma morpho-beh
   # combinations from it in function
-  # nordcanpreprocessing:::add_nordcan_entity_columns. the following
+  # nordcanpreprocessing:::merge_nordcan_entity_columns. the following
   # combinations are set to 888L in column entity_level_30:
   # ```{R}
   # dt_basal <- data.table::CJ(
@@ -32,6 +53,7 @@ add_nordcan_entity_columns <- function(x) {
   # )
   # knitr::kable(dt_basal)
   # ````
+  #
   # @codedoc_comment_block entity
   dt_basal <- data.table::CJ(
     morpho = 8090:8098, beh = 3L, entity_level_30 = 888L
@@ -45,7 +67,7 @@ add_nordcan_entity_columns <- function(x) {
 
   # @codedoc_comment_block entity
   # entity 319 is defined as all sub-types of 320 except 316 and 317. we define
-  # it in function nordcanpreprocessing:::add_nordcan_entity_columns
+  # it in function nordcanpreprocessing:::merge_nordcan_entity_columns
   # by first assigning 319 to every entity_level_30 value to 319 under
   # entity_level_20 == 320, and then defining 316 and 317 as exceptions to this.
   # @codedoc_comment_block entity
@@ -77,7 +99,7 @@ add_nordcan_entity_columns <- function(x) {
 
   # @codedoc_comment_block entity
   # entity 317 is defined as a sub-type of 320 based on morpho-beh combinations
-  # in function nordcanpreprocessing:::add_nordcan_entity_columns.
+  # in function nordcanpreprocessing:::merge_nordcan_entity_columns.
   # the combinations are as follows:
   # ```{R}
   # morpho_317 <- c(
@@ -117,7 +139,7 @@ add_nordcan_entity_columns <- function(x) {
   # )
   # knitr::kable(dt_280)
   # ```
-  # see function nordcanpreprocessing:::add_nordcan_entity_columns for the
+  # see function nordcanpreprocessing:::merge_nordcan_entity_columns for the
   # implementation.
   #
   # the NORDCAN 8.2 stata code was
@@ -140,7 +162,7 @@ add_nordcan_entity_columns <- function(x) {
   # @codedoc_comment_block entity
   # we enforce all other entity_level_* columns to NA other than
   # entity_level_30 when entity_level_30 is either 888 or 999. see function
-  # nordcanpreprocessing:::add_nordcan_entity_columns for the implementation.
+  # nordcanpreprocessing:::merge_nordcan_entity_columns for the implementation.
   # @codedoc_comment_block entity
   entity_col_nms <- nordcancore::nordcan_metadata_column_name_set(
     "column_name_set_entity"
@@ -289,7 +311,7 @@ enrich_nordcan_cancer_record_dataset <- function(
   ]
   x[, "excluded_multiple" := ifelse(x$excluded_multiple==FALSE,1L,0L)]
 
-  x <- add_nordcan_entity_columns(x)
+  x <- merge_nordcan_entity_columns(x)
 
   x[, "excl_imp_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
   gs <- nordcancore::get_global_nordcan_settings()
