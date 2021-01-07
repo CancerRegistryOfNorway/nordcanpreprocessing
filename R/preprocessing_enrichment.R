@@ -142,9 +142,12 @@ merge_nordcan_entity_columns <- function(x) {
   # see function nordcanpreprocessing:::merge_nordcan_entity_columns for the
   # implementation.
   #
-  # the NORDCAN 8.2 stata code was
+  # the NORDCAN 8.2 stata code for this was
+  # ```
   # `* limit included bladder/urinary tumors to 8010/2, 8120/1, 8120/2, 8130/1, 8130/2`
   # `replace entity_level1 = "999" if entity_level1 == "280" & inrange(beh, 0,2) & !inlist(morpho, 8010, 8120, 8130)`
+  # ```
+  #
   # @codedoc_comment_block entity
   dt_280_to_999 <-  data.table::CJ(
     morpho = setdiff(x[["morpho"]], c(8010L, 8120L, 8130L)),
