@@ -87,7 +87,7 @@ nordcan_processed_cancer_death_count_dataset <- function(
     subregion_number_set <- setdiff(subregion_number_set, topregion_number)
     x_subregions <- x[x[["region"]] %in% subregion_number_set, ]
     nonregion_stratum_col_nms <- setdiff(stratum_col_nms, "region")
-    x_topregion <- x[
+    x_topregion <- x_subregions[
       j = lapply(.SD, sum),
       keyby = nonregion_stratum_col_nms,
       .SDcols = "cancer_death_count"
