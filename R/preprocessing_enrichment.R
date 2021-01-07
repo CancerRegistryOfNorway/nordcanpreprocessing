@@ -199,7 +199,7 @@ merge_nordcan_entity_columns <- function(x) {
 #' @eval nordcancore::object_code_documentation(
 #'   text_file_paths = "R/preprocessing_enrichment.R",
 #'   regex = "entity",
-#'   tag = "@section Entity exceptions:"
+#'   head = "@section Entity exceptions:"
 #' )
 #' @export
 #' @importFrom data.table := .SD
