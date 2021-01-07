@@ -24,6 +24,15 @@ passed to \verb{[iarccrgtools::set_tools_work_dir]}}
 Add new necessary columns to the cancer case dataset for use in computing
 statistics.
 }
+\details{
+\itemize{
+\item enrich_nordcan_cancer_record_dataset takes a copy of \code{x} to ensure the
+unprocessed dataset is not affected by the enrichment process.
+\item surv_time is computed as the number of days
+\code{end_of_followup - date_of_incidence}. Additionally,
+when \code{autopsy == 1}, \code{surv_time} is set to zero.
+}
+}
 \section{Format of input dataset}{
 
 See https://github.com/CancerRegistryOfNorway/NORDCAN/wiki/Call-for-data---Incidence

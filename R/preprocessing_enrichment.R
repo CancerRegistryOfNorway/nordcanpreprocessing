@@ -198,6 +198,11 @@ merge_nordcan_entity_columns <- function(x) {
 #' See https://github.com/CancerRegistryOfNorway/NORDCAN/wiki/Module-PreprocessEnrich
 #' @eval nordcancore::object_code_documentation(
 #'   text_file_paths = "R/preprocessing_enrichment.R",
+#'   regex = "function_enrich_nordcan_cancer_record_dataset",
+#'   head = "@details"
+#' )
+#' @eval nordcancore::object_code_documentation(
+#'   text_file_paths = "R/preprocessing_enrichment.R",
 #'   regex = "entity",
 #'   head = "@section Entity exceptions:"
 #' )
@@ -215,16 +220,28 @@ enrich_nordcan_cancer_record_dataset <- function(
     )
   )
 
-  #takes a copy so the original object is not affected
+  # @codedoc_comment_block function_enrich_nordcan_cancer_record_dataset
+  #
+  # - enrich_nordcan_cancer_record_dataset takes a copy of `x` to ensure the
+  #   unprocessed dataset is not affected by the enrichment process.
+  #
+  # @codedoc_comment_block function_enrich_nordcan_cancer_record_dataset
   x <- data.table::setDT(data.table::copy(x))
 
-  #definitions
   x[, "mob" := data.table::month(x$date_of_birth)]
   x[, "yob" := data.table::year(x$date_of_birth)]
   x[, "moi" := data.table::month(x$date_of_incidence)]
   x[, "yoi" := data.table::year(x$date_of_incidence)]
   x[, "mof" := data.table::month(x$end_of_followup)]
   x[, "yof" := data.table::year(x$end_of_followup)]
+
+  # @codedoc_comment_block function_enrich_nordcan_cancer_record_dataset
+  # @codedoc_comment_block column_surv_time
+  # - surv_time is computed as the number of days
+  #   `end_of_followup - date_of_incidence`. Additionally,
+  #   when `autopsy == 1`, `surv_time` is set to zero.
+  # @codedoc_comment_block column_surv_time
+  # @codedoc_comment_block function_enrich_nordcan_cancer_record_dataset
   x[, "surv_time" := as.numeric(x$end_of_followup - x$date_of_incidence)]
   x[x$autopsy == 1, "surv_time" := 0.0]
 
