@@ -336,7 +336,7 @@ enrich_nordcan_cancer_record_dataset <- function(
   x[, "excl_imp_entitymissing" := ifelse(x$entity_level_30 %in% c(888L, 999L), 1L,0L)]
   gs <- nordcancore::get_global_nordcan_settings()
   first_yoi <- gs[["stat_cancer_record_count_first_year"]]
-  last_yoi <- nordcancore::nordcan_metadata_nordcan_year()
+  last_yoi <- gs[["last_year"]]
   x[
     j = "excl_imp_year" := as.integer(
       !data.table::between(x$yoi, first_yoi, last_yoi, incbounds = TRUE)
