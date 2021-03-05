@@ -250,6 +250,7 @@ report_funs_by_column_format <- list(
     column_specification <- nordcancore::nordcan_metadata_column_specifications(
       column_name
     )
+    column_specification[["max"]] <- Sys.Date()
     report_df <- dbc::tests_to_report(
       tests = c(
         paste0("inherits(", column_name, ", \"Date\")"),
@@ -384,6 +385,7 @@ report_funs_by_column_format <- list(
       column_name
     )
     levels <- column_specification[["levels"]]
+    if (levels[1] == 1800L) {1800L:data.table::year(Sys.Date())}
     dbc::report_vector_elems_are_in_set(
       x = x[[column_name]],
       x_nm = column_name,
