@@ -107,10 +107,10 @@ nordcan_processed_cancer_death_count_dataset <- function(
   ## full_comb <- full_comb[which(full_comb$agegroup %in% 1:18), ]
 
   yr <- range(x$year, na.rm = TRUE)
-  x_fc <- data.frame(data.table::rbindlist(lapply(yr[1]:yr[2],function(x) {full_comb$year = x; full_comb})))
+  x_fc <- data.table::rbindlist(lapply(yr[1]:yr[2],function(x) {full_comb$year = x; full_comb}))
   x <- merge(x_fc, x, all.x = TRUE)
   id <- which(is.na(x$cancer_death_count))
-  if (length(id) >0) {x$cancer_death_count[id] <- 0}
+  if (length(id) >0) {x$cancer_death_count[id] <- 0L}
 
 
   data.table::setcolorder(x, stratum_col_nms)
