@@ -567,8 +567,10 @@ report_national_population_life_table_is_valid <- function(
 ) {
   dataset_env <- as.environment(x)
   parent.env(dataset_env) <- environment()
-  first_year_survival <- nordcancore::get_global_nordcan_settings()$stat_survival_follow_up_first_year
-  year_nordcan <- nordcancore::get_global_nordcan_settings()$last_year
+
+  gs <- nordcancore::get_global_nordcan_settings()
+  first_year_survival <- gs[["first_year_survival"]]
+  year_nordcan <- gs[["last_year_survival"]]
 
   report_df <- dbc::tests_to_report(
     tests = c("first_year_survival:year_nordcan %in% unique(year) ",
