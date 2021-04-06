@@ -105,7 +105,6 @@ nordcan_processed_cancer_death_count_dataset <- function(
     ]
 
     x <- rbind(x_topregion, x_subregions, use.names = TRUE)
-
   }
 
   ## Full combination of columns
