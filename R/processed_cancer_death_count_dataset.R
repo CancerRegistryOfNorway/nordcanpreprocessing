@@ -50,7 +50,7 @@ nordcan_processed_cancer_death_count_dataset <- function(
       "ICD10-codes starting with 'D' are not supposed to get entity codes. ",
       "You can ignore these. If you have ICD7-ICD9-code in range 140-209 or ",
       "ICD10-codes starting with 'C' which do not get an entity, ",
-      "contact Siri LarÃ¸nningen (siri.laronningen@kreftregisteret.no)."
+      "contact Siri Larønningen (siri.laronningen@kreftregisteret.no)."
     )
     ge <- globalenv()
     ge[["._undefined"]] <- undefined
@@ -85,16 +85,27 @@ nordcan_processed_cancer_death_count_dataset <- function(
       "region"
     )[["region"]]
     subregion_number_set <- setdiff(subregion_number_set, topregion_number)
-    x_subregions <- x[x[["region"]] %in% subregion_number_set, ]
+    x_subregions <- x[ x[["region"]] %in% subregion_number_set, ]
+    x_topregion  <- x[!x[["region"]] %in% subregion_number_set, ]
+
     nonregion_stratum_col_nms <- setdiff(stratum_col_nms, "region")
-    x_topregion <- x_subregions[
+
+    x_subregions_sum <- x_subregions[
       j = lapply(.SD, sum),
       keyby = nonregion_stratum_col_nms,
       .SDcols = "cancer_death_count"
     ]
-    x_topregion[, "region" := topregion_number]
+    x_subregions_sum[, "region" := topregion_number]
+    ## The case number for top region equal: original top number + sum of sub regions
+    x_topregion <- rbind(x_topregion, x_subregions_sum, use.names = TRUE)
+    x_topregion <- x_topregion[
+      j = lapply(.SD, sum),
+      keyby = stratum_col_nms,
+      .SDcols = "cancer_death_count"
+    ]
 
     x <- rbind(x_topregion, x_subregions, use.names = TRUE)
+
   }
 
   ## Full combination of columns
@@ -111,7 +122,6 @@ nordcan_processed_cancer_death_count_dataset <- function(
   x <- merge(x_fc, x, all.x = TRUE)
   id <- which(is.na(x$cancer_death_count))
   if (length(id) >0) {x$cancer_death_count[id] <- 0L}
-
 
   data.table::setcolorder(x, stratum_col_nms)
   data.table::setkeyv(x, stratum_col_nms)
