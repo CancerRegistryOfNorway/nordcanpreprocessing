@@ -109,7 +109,7 @@ nordcan_processed_cancer_death_count_dataset <- function(
 
   ## Full combination of columns
   col_level <- setdiff(col_nms, c("cancer_death_count", "year"))
-  print(col_level)
+  # print(col_level)
   full_comb <- nordcancore:::nordcan_metadata_column_level_space_dt(col_level)
   ## By default, full_comb contains all regions of the country.
   # full_comb <- full_comb[which(full_comb$region %in% unique(x$region)), ]
