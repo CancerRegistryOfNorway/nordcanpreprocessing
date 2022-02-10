@@ -50,7 +50,7 @@ nordcan_processed_cancer_death_count_dataset <- function(
       "ICD10-codes starting with 'D' are not supposed to get entity codes. ",
       "You can ignore these. If you have ICD7-ICD9-code in range 140-209 or ",
       "ICD10-codes starting with 'C' which do not get an entity, ",
-      "contact Siri Larønningen (siri.laronningen@kreftregisteret.no)."
+      "contact Siri Laronningen (siri.laronningen@kreftregisteret.no)."
     )
     ge <- globalenv()
     ge[["._undefined"]] <- undefined

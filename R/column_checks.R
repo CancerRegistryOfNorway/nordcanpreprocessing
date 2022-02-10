@@ -5,7 +5,7 @@
 #' using functionality from package `dbc`.
 #' @details
 #' `report_` functions produce a `data.frame` describing whether tests passed,
-#' and if not, how they failed. See e.g. `[dbc::tests_to_report]`.
+#' and if not, how they failed. See e.g. `[dbc::expressions_to_report]`.
 #'
 #' `assert_` functions raise an error if any test in the corresponding report
 #' did not pass. See e.g. `[dbc::report_to_assertion]`.
@@ -148,8 +148,8 @@ report_dataset_columns_are_valid <- function(
     parent.env(dataset_env) <- parent.frame(1L)
     report_df <- rbind(
       report_df,
-      dbc::tests_to_report(
-        tests = reports_on_column_name_sets[["test_string"]],
+      dbc::expressions_to_report(
+        expressions = reports_on_column_name_sets[["test_string"]],
         env = dataset_env
       )
     )
@@ -221,8 +221,8 @@ report_funs_by_column_format <- list(
     )
     dataset_env <- as.environment(x)
     parent.env(dataset_env) <- environment()
-    dbc::tests_to_report(
-      tests = c(
+    dbc::expressions_to_report(
+      expressions = c(
         paste0("nchar(", column_name, ") <= 50L"),
         "!duplicated(x)"
       ),
@@ -251,8 +251,8 @@ report_funs_by_column_format <- list(
       column_name
     )
     column_specification[["max"]] <- Sys.Date()
-    report_df <- dbc::tests_to_report(
-      tests = c(
+    report_df <- dbc::expressions_to_report(
+      expressions = c(
         paste0("inherits(", column_name, ", \"Date\")"),
         paste0("grepl(\"[0-9]{4}-[0-1][[0-9]-[0-3][0-9]\", ",column_name,")")
       ),
@@ -275,8 +275,8 @@ report_funs_by_column_format <- list(
     if (!is.null(min)) {
       report_df <- rbind(
         report_df,
-        dbc::tests_to_report(
-          tests = "x[[column_name]] >= min",
+        dbc::expressions_to_report(
+          expressions = "x[[column_name]] >= min",
           fail_messages = paste0(
             "Column ${column_name} had values less than ${min}; ",
             "positions of first five invalid values: ",
@@ -293,8 +293,8 @@ report_funs_by_column_format <- list(
     if (!is.null(max)) {
       report_df <- rbind(
         report_df,
-        dbc::tests_to_report(
-          tests = "x[[column_name]] <= max",
+        dbc::expressions_to_report(
+          expressions = "x[[column_name]] <= max",
           fail_messages = paste0(
             "Column ${column_name} had values > ${max}; ",
             "positions of first five invalid values: ",
@@ -322,8 +322,8 @@ report_funs_by_column_format <- list(
     max <- column_specification[["max"]]
     report_df <- rbind(
       report_df,
-      dbc::tests_to_report(
-        tests = c(
+      dbc::expressions_to_report(
+        expressions = c(
           "x[[column_name]] >= min",
           "x[[column_name]] <= max"
         ),
@@ -357,8 +357,8 @@ report_funs_by_column_format <- list(
     max <- column_specification[["max"]]
     report_df <- rbind(
       report_df,
-      dbc::tests_to_report(
-        tests = c(
+      dbc::expressions_to_report(
+        expressions = c(
           "x[[column_name]] >= min",
           "x[[column_name]] <= max"
         ),
@@ -407,8 +407,8 @@ report_funs_by_column_format <- list(
     if (!is.null(max_nchars)) {
       report_df <- rbind(
         report_df,
-        dbc::tests_to_report(
-          tests = c(
+        dbc::expressions_to_report(
+          expressions = c(
             "nchar(x[[column_name]]) <= max_nchars"
           ),
           fail_messages = c(
@@ -427,8 +427,8 @@ report_funs_by_column_format <- list(
     if (digit_only) {
       report_df <- rbind(
         report_df,
-        dbc::tests_to_report(
-          tests = c(
+        dbc::expressions_to_report(
+          expressions = c(
             "grepl('^[0-9]*$', x[[column_name]])"
           ),
           fail_messages = c(
@@ -452,8 +452,8 @@ report_funs_by_column_format <- list(
     )
     dataset_env <- as.environment(x)
     parent.env(dataset_env) <- environment()
-    report_df <- dbc::tests_to_report(
-      tests = paste0(
+    report_df <- dbc::expressions_to_report(
+      expressions = paste0(
         "is.na(", column_name,") | grepl(\"[A-Z][0-9]+\", ", column_name,")"
       ),
       fail_messages = paste0(
@@ -474,8 +474,8 @@ report_funs_by_column_format <- list(
     )
     msg <- column_specification[["message"]]
     format <- "Other"
-    report_df <- dbc::tests_to_report(
-      tests = "format == \"Other\"",
+    report_df <- dbc::expressions_to_report(
+      expressions = "format == \"Other\"",
       fail_messages = "internal error: expected format to be \"Other\"",
       pass_messages = "No checks defined for column ${column_name}"
     )
@@ -572,10 +572,10 @@ report_national_population_life_table_is_valid <- function(
   first_year_survival <- gs[["first_year_survival"]]
   year_nordcan <- gs[["last_year_survival"]]
 
-  report_df <- dbc::tests_to_report(
-    tests = c("first_year_survival:year_nordcan %in% unique(year) ",
-              "0:90 %in% age",
-              "prob >= 0 & prob <= 1"
+  report_df <- dbc::expressions_to_report(
+    expressions = c("first_year_survival:year_nordcan %in% unique(year) ",
+                    "0:90 %in% age",
+                    "prob >= 0 & prob <= 1"
     ),
     fail_messages = c(
       paste0(sprintf("Column 'year' should have every year between the first survival year (%s) and the current NORDCAN year (%s).",
@@ -618,8 +618,8 @@ assert_national_population_life_table_is_valid <- function(
 report_unprocessed_cancer_death_count_dataset <- function(x) {
   dataset_env <- as.environment(x)
   parent.env(dataset_env) <- environment()
-  report_df <- dbc::tests_to_report(
-    tests = c(
+  report_df <- dbc::expressions_to_report(
+    expressions = c(
       "icd_version %in% 6:10",
       "nchar(icd_code) %in% 3:4",
       "(icd_version == 10 & grepl('^[a-zA-Z]', icd_code)) | icd_version != 10",

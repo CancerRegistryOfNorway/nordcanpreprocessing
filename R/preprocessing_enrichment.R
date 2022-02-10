@@ -376,8 +376,8 @@ enrich_nordcan_cancer_record_dataset <- function(
   ]
 
   dbc::report_to_assertion(
-    dbc::tests_to_report(
-      tests = "!(x$excl_imp_total == 1L & x$excl_surv_total == 0L)",
+    dbc::expressions_to_report(
+      expressions = "!(x$excl_imp_total == 1L & x$excl_surv_total == 0L)",
       fail_messages = paste0(
         "x$excl_surv_total did not have every exclusion that ",
         "x$excl_imp_total has (${n_fail} failures)"
