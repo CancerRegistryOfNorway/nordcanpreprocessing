@@ -15,7 +15,6 @@ the dataset of death counts as per the call for data}
 Create the NORDCAN cancer death count dataset from raw data.
 }
 \examples{
-library("data.table")
 dt <- data.table::data.table(
   year = 2018L,
   sex = 1L,
@@ -26,5 +25,15 @@ dt <- data.table::data.table(
   cancer_death_count = 10L
 )
 
+nordcancore::set_global_nordcan_settings(
+  work_dir = ".",
+  participant_name = "Norway",
+  first_year_incidence = 1960L,
+  first_year_mortality = 1980L,
+  first_year_region = 1990L,
+  last_year_incidence = 2020L,
+  last_year_mortality = 2020L,
+  last_year_survival = 2020L
+)
 cdcd <- nordcan_processed_cancer_death_count_dataset(x = dt)
 }

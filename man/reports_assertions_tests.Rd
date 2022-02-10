@@ -80,7 +80,7 @@ using functionality from package \code{dbc}.
 }
 \details{
 \code{report_} functions produce a \code{data.frame} describing whether tests passed,
-and if not, how they failed. See e.g. \verb{[dbc::tests_to_report]}.
+and if not, how they failed. See e.g. \verb{[dbc::expressions_to_report]}.
 
 \code{assert_} functions raise an error if any test in the corresponding report
 did not pass. See e.g. \verb{[dbc::report_to_assertion]}.
