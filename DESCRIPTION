@@ -8,7 +8,7 @@ Authors@R: c(
   )
 Maintainer: Huidong Tian <huidong.tian@kreftregisteret.no>
 Description: Enables preprocessing of NORDCAN datasets.
-License: MIT + file LICENSE
+License: file LICENSE
 Imports: 
     data.table,
     dbc,
