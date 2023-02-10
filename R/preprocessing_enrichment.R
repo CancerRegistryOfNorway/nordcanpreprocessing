@@ -248,15 +248,15 @@ enrich_nordcan_cancer_record_dataset <- function(
   age_breaks <- c(seq(0.0, 90.0, 5.0), Inf)
   x[, "agegroup" := cut(x$age, age_breaks, right = FALSE, labels = FALSE)]
   x[x$agegroup == 19L, "agegroup" := 21L]
-  x[, "agr_all_ages" := 1L]
-  agr_bone_breaks <- c(0, 30, 40, 50, 70, 90, Inf)
-  x[, "agr_bone" := cut(x$age, agr_bone_breaks, right = FALSE, labels = FALSE)]
-  agr_all_sites_breaks <- c(0, 30, 50, 70, 80, 90, Inf)
-  x[
-    j = "agr_all_sites" := cut(
-      x$age, agr_all_sites_breaks, right = FALSE, labels = FALSE
-    )
-  ]
+  # x[, "agr_all_ages" := 1L]
+  # agr_bone_breaks <- c(0, 30, 40, 50, 70, 90, Inf)
+  # x[, "agr_bone" := cut(x$age, agr_bone_breaks, right = FALSE, labels = FALSE)]
+  # agr_all_sites_breaks <- c(0, 30, 50, 70, 80, 90, Inf)
+  # x[
+  #   j = "agr_all_sites" := cut(
+  #     x$age, agr_all_sites_breaks, right = FALSE, labels = FALSE
+  #   )
+  # ]
 
   period_5_levels <- nordcancore::nordcan_metadata_column_level_space_list(
     "period_5"
@@ -350,7 +350,7 @@ enrich_nordcan_cancer_record_dataset <- function(
     .SDcols = excl_imp_col_nms
   ]
 
-  x[, "excl_surv_age" := ifelse (x$age<90,0L,1L)]
+  # x[, "excl_surv_age" := ifelse (x$age<90,0L,1L)];
   x[, "excl_surv_dco" := ifelse (x$bod==0,1L,0L)]
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,1L,0L)]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]

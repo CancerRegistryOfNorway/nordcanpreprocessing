@@ -58,27 +58,83 @@ There are a number of exceptions to the ICD-10 to entity conversion.
 entity 300 is modfied by removing bascal cell carcinoma morpho-beh
 combinations from it in function
 nordcanpreprocessing:::merge_nordcan_entity_columns. the following
-combinations are set to 888L in column entity_level_30:\if{html}{\out{<div class="sourceCode {R}">}}\preformatted{dt_basal <- data.table::CJ(
+combinations are set to 888L in column entity_level_30:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{dt_basal <- data.table::CJ(
 morpho = 8090:8098, beh = 3L
 )
 knitr::kable(dt_basal)
-}\if{html}{\out{</div>}}
+}\if{html}{\out{</div>}}\tabular{rr}{
+   morpho \tab beh \cr
+   8090 \tab 3 \cr
+   8091 \tab 3 \cr
+   8092 \tab 3 \cr
+   8093 \tab 3 \cr
+   8094 \tab 3 \cr
+   8095 \tab 3 \cr
+   8096 \tab 3 \cr
+   8097 \tab 3 \cr
+   8098 \tab 3 \cr
+}
+
 
 entity 319 is defined as all sub-types of 320 except 316 and 317. we define
 it in function nordcanpreprocessing:::merge_nordcan_entity_columns
 by first assigning 319 to every entity_level_30 value to 319 under
 entity_level_20 == 320, and then defining 316 and 317 as exceptions to this.
 entity 316 is defined as a sub-type of 320 based on morpho-beh combinations.
-the combinations are as follows:\if{html}{\out{<div class="sourceCode {R}">}}\preformatted{dt_316 <-  data.table::CJ(
+the combinations are as follows:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{dt_316 <-  data.table::CJ(
 morpho = c(9530:9535, 9537:9539), beh = 0:3,
 entity_level_20 = 320L
 )
 knitr::kable(dt_316)
-}\if{html}{\out{</div>}}
+}\if{html}{\out{</div>}}\tabular{rrr}{
+   morpho \tab beh \tab entity_level_20 \cr
+   9530 \tab 0 \tab 320 \cr
+   9530 \tab 1 \tab 320 \cr
+   9530 \tab 2 \tab 320 \cr
+   9530 \tab 3 \tab 320 \cr
+   9531 \tab 0 \tab 320 \cr
+   9531 \tab 1 \tab 320 \cr
+   9531 \tab 2 \tab 320 \cr
+   9531 \tab 3 \tab 320 \cr
+   9532 \tab 0 \tab 320 \cr
+   9532 \tab 1 \tab 320 \cr
+   9532 \tab 2 \tab 320 \cr
+   9532 \tab 3 \tab 320 \cr
+   9533 \tab 0 \tab 320 \cr
+   9533 \tab 1 \tab 320 \cr
+   9533 \tab 2 \tab 320 \cr
+   9533 \tab 3 \tab 320 \cr
+   9534 \tab 0 \tab 320 \cr
+   9534 \tab 1 \tab 320 \cr
+   9534 \tab 2 \tab 320 \cr
+   9534 \tab 3 \tab 320 \cr
+   9535 \tab 0 \tab 320 \cr
+   9535 \tab 1 \tab 320 \cr
+   9535 \tab 2 \tab 320 \cr
+   9535 \tab 3 \tab 320 \cr
+   9537 \tab 0 \tab 320 \cr
+   9537 \tab 1 \tab 320 \cr
+   9537 \tab 2 \tab 320 \cr
+   9537 \tab 3 \tab 320 \cr
+   9538 \tab 0 \tab 320 \cr
+   9538 \tab 1 \tab 320 \cr
+   9538 \tab 2 \tab 320 \cr
+   9538 \tab 3 \tab 320 \cr
+   9539 \tab 0 \tab 320 \cr
+   9539 \tab 1 \tab 320 \cr
+   9539 \tab 2 \tab 320 \cr
+   9539 \tab 3 \tab 320 \cr
+   entity 317 is defined as a sub-type of 320 based on morpho-beh combinations \tab  \tab  \cr
+   in function nordcanpreprocessing:::merge_nordcan_entity_columns. \tab  \tab  \cr
+   the combinations are as follows: \tab  \tab  \cr
+}
 
-entity 317 is defined as a sub-type of 320 based on morpho-beh combinations
-in function nordcanpreprocessing:::merge_nordcan_entity_columns.
-the combinations are as follows:\if{html}{\out{<div class="sourceCode {R}">}}\preformatted{morpho_317 <- c(
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{morpho_317 <- c(
 9380, 9381, 9382, 9383, 9384, 9385, 9390, 9391, 9392, 9393,
 9394, 9395, 9396, 9400, 9401, 9410, 9411, 9412, 9413, 9420, 9421,
 9423, 9424, 9425, 9430, 9431, 9432, 9440, 9441, 9442, 9444, 9445,
@@ -88,21 +144,173 @@ the combinations are as follows:\if{html}{\out{<div class="sourceCode {R}">}}\pr
 dt_317 <- data.table::CJ(morpho = morpho_317, beh = 1:3)
 data.table::set(dt_317, j = "entity_level_20", value = 320L)
 knitr::kable(dt_317)
-}\if{html}{\out{</div>}}
+}\if{html}{\out{</div>}}\tabular{rrr}{
+   morpho \tab beh \tab entity_level_20 \cr
+   9380 \tab 1 \tab 320 \cr
+   9380 \tab 2 \tab 320 \cr
+   9380 \tab 3 \tab 320 \cr
+   9381 \tab 1 \tab 320 \cr
+   9381 \tab 2 \tab 320 \cr
+   9381 \tab 3 \tab 320 \cr
+   9382 \tab 1 \tab 320 \cr
+   9382 \tab 2 \tab 320 \cr
+   9382 \tab 3 \tab 320 \cr
+   9383 \tab 1 \tab 320 \cr
+   9383 \tab 2 \tab 320 \cr
+   9383 \tab 3 \tab 320 \cr
+   9384 \tab 1 \tab 320 \cr
+   9384 \tab 2 \tab 320 \cr
+   9384 \tab 3 \tab 320 \cr
+   9385 \tab 1 \tab 320 \cr
+   9385 \tab 2 \tab 320 \cr
+   9385 \tab 3 \tab 320 \cr
+   9390 \tab 1 \tab 320 \cr
+   9390 \tab 2 \tab 320 \cr
+   9390 \tab 3 \tab 320 \cr
+   9391 \tab 1 \tab 320 \cr
+   9391 \tab 2 \tab 320 \cr
+   9391 \tab 3 \tab 320 \cr
+   9392 \tab 1 \tab 320 \cr
+   9392 \tab 2 \tab 320 \cr
+   9392 \tab 3 \tab 320 \cr
+   9393 \tab 1 \tab 320 \cr
+   9393 \tab 2 \tab 320 \cr
+   9393 \tab 3 \tab 320 \cr
+   9394 \tab 1 \tab 320 \cr
+   9394 \tab 2 \tab 320 \cr
+   9394 \tab 3 \tab 320 \cr
+   9395 \tab 1 \tab 320 \cr
+   9395 \tab 2 \tab 320 \cr
+   9395 \tab 3 \tab 320 \cr
+   9396 \tab 1 \tab 320 \cr
+   9396 \tab 2 \tab 320 \cr
+   9396 \tab 3 \tab 320 \cr
+   9400 \tab 1 \tab 320 \cr
+   9400 \tab 2 \tab 320 \cr
+   9400 \tab 3 \tab 320 \cr
+   9401 \tab 1 \tab 320 \cr
+   9401 \tab 2 \tab 320 \cr
+   9401 \tab 3 \tab 320 \cr
+   9410 \tab 1 \tab 320 \cr
+   9410 \tab 2 \tab 320 \cr
+   9410 \tab 3 \tab 320 \cr
+   9411 \tab 1 \tab 320 \cr
+   9411 \tab 2 \tab 320 \cr
+   9411 \tab 3 \tab 320 \cr
+   9412 \tab 1 \tab 320 \cr
+   9412 \tab 2 \tab 320 \cr
+   9412 \tab 3 \tab 320 \cr
+   9413 \tab 1 \tab 320 \cr
+   9413 \tab 2 \tab 320 \cr
+   9413 \tab 3 \tab 320 \cr
+   9420 \tab 1 \tab 320 \cr
+   9420 \tab 2 \tab 320 \cr
+   9420 \tab 3 \tab 320 \cr
+   9421 \tab 1 \tab 320 \cr
+   9421 \tab 2 \tab 320 \cr
+   9421 \tab 3 \tab 320 \cr
+   9423 \tab 1 \tab 320 \cr
+   9423 \tab 2 \tab 320 \cr
+   9423 \tab 3 \tab 320 \cr
+   9424 \tab 1 \tab 320 \cr
+   9424 \tab 2 \tab 320 \cr
+   9424 \tab 3 \tab 320 \cr
+   9425 \tab 1 \tab 320 \cr
+   9425 \tab 2 \tab 320 \cr
+   9425 \tab 3 \tab 320 \cr
+   9430 \tab 1 \tab 320 \cr
+   9430 \tab 2 \tab 320 \cr
+   9430 \tab 3 \tab 320 \cr
+   9431 \tab 1 \tab 320 \cr
+   9431 \tab 2 \tab 320 \cr
+   9431 \tab 3 \tab 320 \cr
+   9432 \tab 1 \tab 320 \cr
+   9432 \tab 2 \tab 320 \cr
+   9432 \tab 3 \tab 320 \cr
+   9440 \tab 1 \tab 320 \cr
+   9440 \tab 2 \tab 320 \cr
+   9440 \tab 3 \tab 320 \cr
+   9441 \tab 1 \tab 320 \cr
+   9441 \tab 2 \tab 320 \cr
+   9441 \tab 3 \tab 320 \cr
+   9442 \tab 1 \tab 320 \cr
+   9442 \tab 2 \tab 320 \cr
+   9442 \tab 3 \tab 320 \cr
+   9444 \tab 1 \tab 320 \cr
+   9444 \tab 2 \tab 320 \cr
+   9444 \tab 3 \tab 320 \cr
+   9445 \tab 1 \tab 320 \cr
+   9445 \tab 2 \tab 320 \cr
+   9445 \tab 3 \tab 320 \cr
+   9450 \tab 1 \tab 320 \cr
+   9450 \tab 2 \tab 320 \cr
+   9450 \tab 3 \tab 320 \cr
+   9451 \tab 1 \tab 320 \cr
+   9451 \tab 2 \tab 320 \cr
+   9451 \tab 3 \tab 320 \cr
+   9460 \tab 1 \tab 320 \cr
+   9460 \tab 2 \tab 320 \cr
+   9460 \tab 3 \tab 320 \cr
+   9470 \tab 1 \tab 320 \cr
+   9470 \tab 2 \tab 320 \cr
+   9470 \tab 3 \tab 320 \cr
+   9471 \tab 1 \tab 320 \cr
+   9471 \tab 2 \tab 320 \cr
+   9471 \tab 3 \tab 320 \cr
+   9472 \tab 1 \tab 320 \cr
+   9472 \tab 2 \tab 320 \cr
+   9472 \tab 3 \tab 320 \cr
+   9473 \tab 1 \tab 320 \cr
+   9473 \tab 2 \tab 320 \cr
+   9473 \tab 3 \tab 320 \cr
+   9474 \tab 1 \tab 320 \cr
+   9474 \tab 2 \tab 320 \cr
+   9474 \tab 3 \tab 320 \cr
+   9475 \tab 1 \tab 320 \cr
+   9475 \tab 2 \tab 320 \cr
+   9475 \tab 3 \tab 320 \cr
+   9476 \tab 1 \tab 320 \cr
+   9476 \tab 2 \tab 320 \cr
+   9476 \tab 3 \tab 320 \cr
+   9477 \tab 1 \tab 320 \cr
+   9477 \tab 2 \tab 320 \cr
+   9477 \tab 3 \tab 320 \cr
+   9478 \tab 1 \tab 320 \cr
+   9478 \tab 2 \tab 320 \cr
+   9478 \tab 3 \tab 320 \cr
+   9480 \tab 1 \tab 320 \cr
+   9480 \tab 2 \tab 320 \cr
+   9480 \tab 3 \tab 320 \cr
+   bladder/urinary tumours are only allowed to be in the following \tab  \tab  \cr
+   morpho-beh combinations (and set to 999L otherwise): \tab  \tab  \cr
+}
 
-bladder/urinary tumours are only allowed to be in the following
-morpho-beh combinations (and set to 999L otherwise):\if{html}{\out{<div class="sourceCode {R}">}}\preformatted{dt_280 <- data.table::CJ(
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{dt_280 <- data.table::CJ(
 morpho = c(8010L, 8120L, 8130L), beh = 0:2
 )
 knitr::kable(dt_280)
-}\if{html}{\out{</div>}}
-
-see function nordcanpreprocessing:::merge_nordcan_entity_columns for the
-implementation.
-
-the NORDCAN 8.2 stata code for this was\preformatted{`* limit included bladder/urinary tumors to 8010/2, 8120/1, 8120/2, 8130/1, 8130/2`
-`replace entity_level1 = "999" if entity_level1 == "280" & inrange(beh, 0,2) & !inlist(morpho, 8010, 8120, 8130)`
+}\if{html}{\out{</div>}}\tabular{rr}{
+   morpho \tab beh \cr
+   8010 \tab 0 \cr
+   8010 \tab 1 \cr
+   8010 \tab 2 \cr
+   8120 \tab 0 \cr
+   8120 \tab 1 \cr
+   8120 \tab 2 \cr
+   8130 \tab 0 \cr
+   8130 \tab 1 \cr
+   8130 \tab 2 \cr
+   see function nordcanpreprocessing:::merge_nordcan_entity_columns for the \tab  \cr
+   implementation. \tab  \cr
 }
+
+
+the NORDCAN 8.2 stata code for this was
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{`* limit included bladder/urinary tumors to 8010/2, 8120/1, 8120/2, 8130/1, 8130/2`
+`replace entity_level1 = "999" if entity_level1 == "280" & inrange(beh, 0,2) & !inlist(morpho, 8010, 8120, 8130)`
+}\if{html}{\out{</div>}}
 
 we enforce all other entity_level_* columns to NA other than
 entity_level_30 when entity_level_30 is either 888 or 999. see function
