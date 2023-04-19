@@ -350,7 +350,7 @@ enrich_nordcan_cancer_record_dataset <- function(
     .SDcols = excl_imp_col_nms
   ]
 
-  # x[, "excl_surv_age" := ifelse (x$age<90,0L,1L)];
+  x[, "excl_surv_age" := ifelse (x$age<90,0L,1L)];
   x[, "excl_surv_dco" := ifelse (x$bod==0,1L,0L)]
   x[, "excl_surv_autopsy" := ifelse (x$autopsy==1,1L,0L)]
   x[, "excl_surv_negativefou" := ifelse (x$surv_time<0,1L,0L)]
