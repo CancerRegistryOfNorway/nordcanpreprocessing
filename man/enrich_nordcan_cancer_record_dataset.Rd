@@ -128,11 +128,12 @@ knitr::kable(dt_316)
    9539 \tab 1 \tab 320 \cr
    9539 \tab 2 \tab 320 \cr
    9539 \tab 3 \tab 320 \cr
-   entity 317 is defined as a sub-type of 320 based on morpho-beh combinations \tab  \tab  \cr
-   in function nordcanpreprocessing:::merge_nordcan_entity_columns. \tab  \tab  \cr
-   the combinations are as follows: \tab  \tab  \cr
 }
 
+
+entity 317 is defined as a sub-type of 320 based on morpho-beh combinations
+in function nordcanpreprocessing:::merge_nordcan_entity_columns.
+the combinations are as follows:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{morpho_317 <- c(
 9380, 9381, 9382, 9383, 9384, 9385, 9390, 9391, 9392, 9393,
@@ -281,10 +282,11 @@ knitr::kable(dt_317)
    9480 \tab 1 \tab 320 \cr
    9480 \tab 2 \tab 320 \cr
    9480 \tab 3 \tab 320 \cr
-   bladder/urinary tumours are only allowed to be in the following \tab  \tab  \cr
-   morpho-beh combinations (and set to 999L otherwise): \tab  \tab  \cr
 }
 
+
+bladder/urinary tumours are only allowed to be in the following
+morpho-beh combinations (and set to 999L otherwise):
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dt_280 <- data.table::CJ(
 morpho = c(8010L, 8120L, 8130L), beh = 0:2
@@ -301,10 +303,11 @@ knitr::kable(dt_280)
    8130 \tab 0 \cr
    8130 \tab 1 \cr
    8130 \tab 2 \cr
-   see function nordcanpreprocessing:::merge_nordcan_entity_columns for the \tab  \cr
-   implementation. \tab  \cr
 }
 
+
+see function nordcanpreprocessing:::merge_nordcan_entity_columns for the
+implementation.
 
 the NORDCAN 8.2 stata code for this was
 
